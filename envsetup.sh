@@ -1,26 +1,26 @@
 function hmm() {
 cat <<EOF
 Invoke ". build/envsetup.sh" from your shell to add the following functions to your environment:
-- lunch:     lunch <product_name>-<build_variant>
-- tapas:     tapas [<App1> <App2> ...] [arm|x86|mips|armv5|arm64|x86_64|mips64] [eng|userdebug|user]
-- croot:     Changes directory to the top of the tree.
-- m:         Makes from the top of the tree.
-- mm:        Builds all of the modules in the current directory, but not their dependencies.
-- mmm:       Builds all of the modules in the supplied directories, but not their dependencies.
-             To limit the modules being built use the syntax: mmm dir/:target1,target2.
-- mma:       Builds all of the modules in the current directory, and their dependencies.
-- mmma:      Builds all of the modules in the supplied directories, and their dependencies.
-- provision: Flash device with all required partitions. Options will be passed on to fastboot.
-- cgrep:     Greps on all local C/C++ files.
-- ggrep:     Greps on all local Gradle files.
-- jgrep:     Greps on all local Java files.
-- resgrep:   Greps on all local res/*.xml files.
-- mangrep:   Greps on all local AndroidManifest.xml files.
-- mgrep:     Greps on all local Makefiles files.
-- sepgrep:   Greps on all local sepolicy files.
-- sgrep:     Greps on all local source files.
-- godir:     Go to the directory containing a file.
-- pushboot:	 Push a file from your OUT dir to your phone and reboots it, using absolute path.
+- lunch:   lunch <product_name>-<build_variant>
+- tapas:   tapas [<App1> <App2> ...] [arm|x86|mips|armv5|arm64|x86_64|mips64] [eng|userdebug|user]
+- croot:   Changes directory to the top of the tree.
+- m:       Makes from the top of the tree.
+- mm:      Builds all of the modules in the current directory, but not their dependencies.
+- mmm:     Builds all of the modules in the supplied directories, but not their dependencies.
+           To limit the modules being built use the syntax: mmm dir/:target1,target2.
+- mma:     Builds all of the modules in the current directory, and their dependencies.
+- mmp:     Builds all of the modules in the current directory and pushes them to the device.
+- mmmp:    Builds all of the modules in the supplied directories and pushes them to the device.
+- mmma:    Builds all of the modules in the supplied directories, and their dependencies.
+- cgrep:   Greps on all local C/C++ files.
+- ggrep:   Greps on all local Gradle files.
+- jgrep:   Greps on all local Java files.
+- resgrep: Greps on all local res/*.xml files.
+- mangrep: Greps on all local AndroidManifest.xml files.
+- sepgrep: Greps on all local sepolicy files.
+- sgrep:   Greps on all local source files.
+- godir:   Go to the directory containing a file.
+- pushboot:Push a file from your OUT dir to your phone and reboots it, using absolute path.
 
 Environemnt options:
 - SANITIZE_HOST: Set to 'true' to use ASAN for all host modules. Note that
@@ -773,6 +773,59 @@ function pushboot() {
     adb push $OUT/$* /$*
     adb reboot
 }
+
+# Credit for color strip sed: http://goo.gl/BoIcm
+function mmmp()
+{
+    if [[ $# < 1 || $1 == "--help" || $1 == "-h" ]]; then
+        echo "mmmp [make arguments] <path-to-project>"
+        return 1
+    fi
+
+    # Get product name from cm_<product>
+    PRODUCT=`echo $TARGET_PRODUCT | tr "_" "\n" | tail -n 1`
+
+    adb start-server # Prevent unexpected starting server message from adb get-state in the next line
+    if [ $(adb get-state) != device -a $(adb shell busybox test -e /sbin/recovery 2> /dev/null; echo $?) != 0 ] ; then
+        echo "No device is online. Waiting for one..."
+        echo "Please connect USB and/or enable USB debugging"
+        until [ $(adb get-state) = device -o $(adb shell busybox test -e /sbin/recovery 2> /dev/null; echo $?) = 0 ];do
+            sleep 1
+        done
+        echo "Device Found.."
+    fi
+
+    adb root &> /dev/null
+    sleep 0.3
+    adb wait-for-device &> /dev/null
+    sleep 0.3
+    adb remount &> /dev/null
+
+    mmm $* | tee .log
+
+    # Install: <file>
+    LOC=$(cat .log | sed -r 's/\x1B\[([0-9]{1,2}(;[0-9]{1,2})?)?[m|K]//g' | grep 'Install' | cut -d ':' -f 2)
+
+    # Copy: <file>
+    LOC=$LOC $(cat .log | sed -r 's/\x1B\[([0-9]{1,2}(;[0-9]{1,2})?)?[m|K]//g' | grep 'Copy' | cut -d ':' -f 2)
+
+    for FILE in $LOC; do
+        # Get target file name (i.e. system/bin/adb)
+        TARGET=$(echo $FILE | sed "s/\/$PRODUCT\//\n/" | tail -n 1)
+
+        # Don't send files that are not in /system.
+        if ! echo $TARGET | egrep '^system\/' > /dev/null ; then
+            continue
+        else
+            echo "Pushing: $TARGET"
+            adb push $FILE $TARGET
+        fi
+    done
+    rm -f .log
+    return 0
+}
+
+alias mmp='mmmp .'
 
 function gettop
 {
