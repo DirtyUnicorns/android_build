@@ -22,6 +22,8 @@ Invoke ". build/envsetup.sh" from your shell to add the following functions to y
 - sgrep:   Greps on all local source files.
 - godir:   Go to the directory containing a file.
 - pushboot:Push a file from your OUT dir to your phone and reboots it, using absolute path.
+- mka:      Builds using SCHED_BATCH on all processors
+- repopick: Utility to fetch changes from Gerrit.
 
 Environemnt options:
 - SANITIZE_HOST: Set to 'true' to use ASAN for all host modules. Note that
@@ -1677,7 +1679,11 @@ function repodiff() {
       'echo "$REPO_PATH ($REPO_REMOTE)"; git diff ${diffopts} 2>/dev/null ;'
 }
 
-# Force JAVA_HOME to point to java 1.7/1.8 if it isn't already set.
+# Force JAVA_HOME to point to java 1.7 or java 1.6  if it isn't already set.
+#
+# Note that the MacOS path for java 1.7 includes a minor revision number (sigh).
+# For some reason, installing the JDK doesn't make it show up in the
+# JavaVM.framework/Versions/1.7/ folder.
 function set_java_home() {
     # Clear the existing JAVA_HOME value if we set it ourselves, so that
     # we can reset it later, depending on the version of java the build
