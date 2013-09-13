@@ -1234,6 +1234,11 @@ my_tracked_src_files :=
 
 my_c_includes += $(TOPDIR)$(LOCAL_PATH) $(intermediates) $(generated_sources_dir)
 
+## Allow a device's own headers to take precedence over global ones
+ifneq ($(TARGET_SPECIFIC_HEADER_PATH),)
+LOCAL_C_INCLUDES += $(TOPDIR)$(TARGET_SPECIFIC_HEADER_PATH)
+endif
+
 ifndef LOCAL_SDK_VERSION
   my_c_includes += $(JNI_H_INCLUDE)
 endif
