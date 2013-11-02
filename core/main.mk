@@ -551,6 +551,12 @@ ifneq ($(dont_bother),true)
 subdir_makefiles := \
 	$(shell build/tools/findleaves.py $(FIND_LEAVES_EXCLUDES) $(subdirs) Android.mk)
 
+ifneq ($(HIDE_MAKEFILE_INCLUDES),y)
+$(foreach mk, $(subdir_makefiles), $(info including $(mk) ...)$(eval include $(mk)))
+else
+$(foreach mk, $(subdir_makefiles), $(eval include $(mk)))
+endif
+
 ifeq ($(USE_SOONG),true)
 subdir_makefiles := $(SOONG_ANDROID_MK) $(call filter-soong-makefiles,$(subdir_makefiles))
 endif
