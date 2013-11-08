@@ -28,6 +28,7 @@ PRODUCT_PACKAGES += \
     HTMLViewer \
     MediaProvider \
     PackageInstaller \
+    PDroid \
     SettingsProvider \
     Shell \
     bu \
