@@ -123,6 +123,6 @@ popd
 
 echo Done!
 echo Use the following command to set up your build environment:
-echo '  'lunch cm_$DEVICE-eng
+echo '  'lunch du_$DEVICE-eng
 echo And use the follwowing command to build a recovery:
-echo '  '. build/tools/device/makerecoveries.sh cm_$DEVICE-eng
+echo '  '. build/tools/device/makerecoveries.sh du_$DEVICE-eng

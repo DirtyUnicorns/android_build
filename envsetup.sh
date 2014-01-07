@@ -16,14 +16,14 @@ Invoke ". build/envsetup.sh" from your shell to add the following functions to y
 - jgrep:   Greps on all local Java files.
 - resgrep: Greps on all local res/*.xml files.
 - godir:   Go to the directory containing a file.
-- cmremote: Add git remote for CM Gerrit Review.
-- cmgerrit: A Git wrapper that fetches/pushes patch from/to CM Gerrit Review.
-- cmrebase: Rebase a Gerrit change and push it again.
+- duremote: Add git remote for DU Gerrit Review.
+- dugerrit: A Git wrapper that fetches/pushes patch from/to DU Gerrit Review.
+- durebase: Rebase a Gerrit change and push it again.
 - aospremote: Add git remote for matching AOSP repository.
 - cafremote: Add git remote for matching CodeAurora repository.
 - mka:      Builds using SCHED_BATCH on all processors.
 - mkap:     Builds the module(s) using mka and pushes them to the device.
-- cmka:     Cleans and builds using mka.
+- duka:     Cleans and builds using mka.
 - repolastsync: Prints date and time of last repo sync.
 - reposync: Parallel repo sync using ionice and SCHED_BATCH.
 - repopick: Utility to fetch changes from Gerrit.
@@ -74,13 +74,13 @@ function check_product()
         return
     fi
 
-    if (echo -n $1 | grep -q -e "^cm_") ; then
-       CM_BUILD=$(echo -n $1 | sed -e 's/^cm_//g')
-       export BUILD_NUMBER=$((date +%s%N ; echo $CM_BUILD; hostname) | openssl sha1 | sed -e 's/.*=//g; s/ //g' | cut -c1-10)
+    if (echo -n $1 | grep -q -e "^du_") ; then
+       DU_BUILD=$(echo -n $1 | sed -e 's/^du_//g')
+       export BUILD_NUMBER=$((date +%s%N ; echo $DU_BUILD; hostname) | openssl sha1 | sed -e 's/.*=//g; s/ //g' | cut -c1-10)
     else
-       CM_BUILD=
+       DU_BUILD=
     fi
-    export CM_BUILD
+    export DU_BUILD
 
     CALLED_FROM_SETUP=true BUILD_SYSTEM=build/core \
         TARGET_PRODUCT=$1 \
@@ -470,7 +470,7 @@ function print_lunch_menu()
        echo "  (ohai, koush!)"
     fi
     echo
-    if [ "z${CM_DEVICES_ONLY}" != "z" ]; then
+    if [ "z${DU_DEVICES_ONLY}" != "z" ]; then
        echo "Breakfast menu... pick a combo:"
     else
        echo "Lunch menu... pick a combo:"
@@ -484,7 +484,7 @@ function print_lunch_menu()
         i=$(($i+1))
     done | column
 
-    if [ "z${CM_DEVICES_ONLY}" != "z" ]; then
+    if [ "z${DU_DEVICES_ONLY}" != "z" ]; then
        echo "... and don't forget the bacon!"
     fi
 
@@ -506,10 +506,10 @@ function brunch()
 function breakfast()
 {
     target=$1
-    CM_DEVICES_ONLY="true"
+    DU_DEVICES_ONLY="true"
     unset LUNCH_MENU_CHOICES
     add_lunch_combo full-eng
-    for f in `/bin/ls vendor/cm/vendorsetup.sh 2> /dev/null`
+    for f in `/bin/ls vendor/du/vendorsetup.sh 2> /dev/null`
         do
             echo "including $f"
             . $f
@@ -525,8 +525,8 @@ function breakfast()
             # A buildtype was specified, assume a full device name
             lunch $target
         else
-            # This is probably just the CM model name
-            lunch cm_$target-userdebug
+            # This is probably just the DU model name
+            lunch du_$target-userdebug
         fi
     fi
     return $?
@@ -575,7 +575,7 @@ function lunch()
     check_product $product
     if [ $? -ne 0 ]
     then
-        # if we can't find a product, try to grab it off the CM github
+        # if we can't find a product, try to grab it off the DU github
         T=$(gettop)
         pushd $T > /dev/null
         build/tools/roomservice.py $product
@@ -675,8 +675,8 @@ function tapas()
 function eat()
 {
     if [ "$OUT" ] ; then
-        MODVERSION=$(get_build_var CM_VERSION)
-        ZIPFILE=cm-$MODVERSION.zip
+        MODVERSION=$(get_build_var DU_VERSION)
+        ZIPFILE=du-$MODVERSION.zip
         ZIPPATH=$OUT/$ZIPFILE
         if [ ! -f $ZIPPATH ] ; then
             echo "Nothing to eat"
@@ -691,7 +691,7 @@ function eat()
             done
             echo "Device Found.."
         fi
-    if (adb shell cat /system/build.prop | grep -q "ro.cm.device=$CM_BUILD");
+    if (adb shell cat /system/build.prop | grep -q "ro.du.device=$DU_BUILD");
     then
         # if adbd isn't root we can't write to /cache/recovery/
         adb root
@@ -720,7 +720,7 @@ EOF
     fi
     return $?
     else
-        echo "The connected device does not appear to be $CM_BUILD, run away!"
+        echo "The connected device does not appear to be $DU_BUILD, run away!"
     fi
 }
 
@@ -1468,9 +1468,9 @@ function godir () {
     \cd $T/$pathname
 }
 
-function cmremote()
+function duremote()
 {
-    git remote rm cmremote 2> /dev/null
+    git remote rm duremote 2> /dev/null
     if [ ! -d .git ]
     then
         echo .git directory not found. Please run this from the root directory of the Android repository you wish to set up.
@@ -1485,14 +1485,14 @@ function cmremote()
           return 0
         fi
     fi
-    CMUSER=`git config --get review.gerrit.dirtyunicorns.com.username`
-    if [ -z "$CMUSER" ]
+    DUUSER=`git config --get review.gerrit.dirtyunicorns.com.username`
+    if [ -z "$DUUSER" ]
     then
-        git remote add cmremote ssh://gerrit.dirtyunicorns.com:29418/$GERRIT_REMOTE
+        git remote add duremote ssh://gerrit.dirtyunicorns.com:29418/$GERRIT_REMOTE
     else
-        git remote add cmremote ssh://$CMUSER@gerrit.dirtyunicorns.com:29418/$GERRIT_REMOTE
+        git remote add duremote ssh://$DUUSER@gerrit.dirtyunicorns.com:29418/$GERRIT_REMOTE
     fi
-    echo You can now push to "cmremote".
+    echo You can now push to "duremote".
 }
 
 function aospremote()
@@ -1558,7 +1558,7 @@ function installboot()
     sleep 1
     adb wait-for-online shell mount /system 2>&1 > /dev/null
     adb wait-for-online remount
-    if (adb shell cat /system/build.prop | grep -q "ro.cm.device=$CM_BUILD");
+    if (adb shell cat /system/build.prop | grep -q "ro.du.device=$DU_BUILD");
     then
         adb push $OUT/boot.img /cache/
         for i in $OUT/system/lib/modules/*;
@@ -1574,7 +1574,7 @@ function installboot()
         adb shell chmod 644 /system/lib/modules/*
         echo "Installation complete."
     else
-        echo "The connected device does not appear to be $CM_BUILD, run away!"
+        echo "The connected device does not appear to be $DU_BUILD, run away!"
     fi
 }
 
@@ -1608,13 +1608,13 @@ function installrecovery()
     sleep 1
     adb wait-for-online shell mount /system 2>&1 >> /dev/null
     adb wait-for-online remount
-    if (adb shell cat /system/build.prop | grep -q "ro.cm.device=$CM_BUILD");
+    if (adb shell cat /system/build.prop | grep -q "ro.du.device=$DU_BUILD");
     then
         adb push $OUT/recovery.img /cache/
         adb shell dd if=/cache/recovery.img of=$PARTITION
         echo "Installation complete."
     else
-        echo "The connected device does not appear to be $CM_BUILD, run away!"
+        echo "The connected device does not appear to be $DU_BUILD, run away!"
     fi
 }
 
@@ -1637,8 +1637,8 @@ function makerecipe() {
   if [ "$REPO_REMOTE" == "github" ]
   then
     pwd
-    cmremote
-    git push cmremote HEAD:refs/heads/'$1'
+    duremote
+    git push duremote HEAD:refs/heads/'$1'
   fi
   '
 
@@ -1647,7 +1647,7 @@ function makerecipe() {
   cd ..
 }
 
-function cmgerrit() {
+function dugerrit() {
     if [ $# -eq 0 ]; then
         $FUNCNAME help
         return 1
@@ -1686,9 +1686,9 @@ EOF
                 return
             fi
             case $1 in
-                __cmg_*) echo "For internal use only." ;;
+                __dug_*) echo "For internal use only." ;;
                 changes|for)
-                    if [ "$FUNCNAME" = "cmgerrit" ]; then
+                    if [ "$FUNCNAME" = "dugerrit" ]; then
                         echo "'$FUNCNAME $1' is deprecated."
                     fi
                     ;;
@@ -1719,7 +1719,7 @@ HEAD will be pushed from local if omitted.
 EOF
                     ;;
                 *)
-                    $FUNCNAME __cmg_err_not_supported $1 && return
+                    $FUNCNAME __dug_err_not_supported $1 && return
                     cat <<EOF
 usage: $FUNCNAME $1 [OPTIONS] CHANGE-ID[/PATCH-SET][{@|^|~|:}ARG] [-- ARGS]
 
@@ -1731,8 +1731,8 @@ EOF
                     ;;
             esac
             ;;
-        __cmg_get_ref)
-            $FUNCNAME __cmg_err_no_arg $command $# && return 1
+        __dug_get_ref)
+            $FUNCNAME __dug_err_no_arg $command $# && return 1
             local change_id patchset_id hash
             case $1 in
                 */*)
@@ -1751,16 +1751,16 @@ EOF
             echo "refs/changes/$hash/$change_id/$patchset_id"
             ;;
         fetch|pull)
-            $FUNCNAME __cmg_err_no_arg $command $# help && return 1
-            $FUNCNAME __cmg_err_not_repo && return 1
+            $FUNCNAME __dug_err_no_arg $command $# help && return 1
+            $FUNCNAME __dug_err_not_repo && return 1
             local change=$1
             shift
             git $command $@ http://$review/p/$project \
-                $($FUNCNAME __cmg_get_ref $change) || return 1
+                $($FUNCNAME __dug_get_ref $change) || return 1
             ;;
         push)
-            $FUNCNAME __cmg_err_no_arg $command $# help && return 1
-            $FUNCNAME __cmg_err_not_repo && return 1
+            $FUNCNAME __dug_err_no_arg $command $# help && return 1
+            $FUNCNAME __dug_err_not_repo && return 1
             if [ -z "$user" ]; then
                 echo >&2 "Gerrit username not found."
                 return 1
@@ -1781,11 +1781,11 @@ EOF
                 $local_branch:refs/for/$remote_branch || return 1
             ;;
         changes|for)
-            if [ "$FUNCNAME" = "cmgerrit" ]; then
+            if [ "$FUNCNAME" = "dugerrit" ]; then
                 echo >&2 "'$FUNCNAME $command' is deprecated."
             fi
             ;;
-        __cmg_err_no_arg)
+        __dug_err_no_arg)
             if [ $# -lt 2 ]; then
                 echo >&2 "'$FUNCNAME $command' missing argument."
             elif [ $2 -eq 0 ]; then
@@ -1798,15 +1798,15 @@ EOF
                 return 1
             fi
             ;;
-        __cmg_err_not_repo)
+        __dug_err_not_repo)
             if [ -z "$review" -o -z "$project" ]; then
                 echo >&2 "Not currently in any reviewable repository."
             else
                 return 1
             fi
             ;;
-        __cmg_err_not_supported)
-            $FUNCNAME __cmg_err_no_arg $command $# && return
+        __dug_err_not_supported)
+            $FUNCNAME __dug_err_no_arg $command $# && return
             case $1 in
                 #TODO: filter more git commands that don't use refname
                 init|add|rm|mv|status|clone|remote|bisect|config|stash)
@@ -1817,9 +1817,9 @@ EOF
             ;;
     #TODO: other special cases?
         *)
-            $FUNCNAME __cmg_err_not_supported $command && return 1
-            $FUNCNAME __cmg_err_no_arg $command $# help && return 1
-            $FUNCNAME __cmg_err_not_repo && return 1
+            $FUNCNAME __dug_err_not_supported $command && return 1
+            $FUNCNAME __dug_err_no_arg $command $# help && return 1
+            $FUNCNAME __dug_err_not_repo && return 1
             local args="$@"
             local change pre_args refs_arg post_args
             case "$args" in
@@ -1880,15 +1880,15 @@ EOF
     esac
 }
 
-function cmrebase() {
+function durebase() {
     local repo=$1
     local refs=$2
     local pwd="$(pwd)"
     local dir="$(gettop)/$repo"
 
     if [ -z $repo ] || [ -z $refs ]; then
-        echo "CyanogenMod Gerrit Rebase Usage: "
-        echo "      cmrebase <path to project> <patch IDs on Gerrit>"
+        echo "Dirty Unicorns Gerrit Rebase Usage: "
+        echo "      durebase <path to project> <patch IDs on Gerrit>"
         echo "      The patch IDs appear on the Gerrit commands that are offered."
         echo "      They consist on a series of numbers and slashes, after the text"
         echo "      refs/changes. For example, the ID in the following command is 26/8126/2"
@@ -1932,7 +1932,7 @@ function mka() {
     esac
 }
 
-function cmka() {
+function duka() {
     if [ ! -z "$1" ]; then
         for i in "$@"; do
             case $i in
@@ -1995,7 +1995,7 @@ function dopush()
         echo "Device Found."
     fi
 
-    if (adb shell cat /system/build.prop | grep -q "ro.cm.device=$CM_BUILD");
+    if (adb shell cat /system/build.prop | grep -q "ro.du.device=$DU_BUILD");
     then
     # retrieve IP and PORT info if we're using a TCP connection
     TCPIPPORT=$(adb devices | egrep '^[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+:[0-9]+[^0-9]+' \
@@ -2046,14 +2046,14 @@ function dopush()
     rm -f $OUT/.log
     return 0
     else
-        echo "The connected device does not appear to be $CM_BUILD, run away!"
+        echo "The connected device does not appear to be $DU_BUILD, run away!"
     fi
 }
 
 alias mmp='dopush mm'
 alias mmmp='dopush mmm'
 alias mkap='dopush mka'
-alias cmkap='dopush cmka'
+alias dukap='dopush duka'
 
 function repopick() {
     T=$(gettop)
@@ -2063,7 +2063,7 @@ function repopick() {
 function fixup_common_out_dir() {
     common_out_dir=$(get_build_var OUT_DIR)/target/common
     target_device=$(get_build_var TARGET_DEVICE)
-    if [ ! -z $CM_FIXUP_COMMON_OUT ]; then
+    if [ ! -z $DU_FIXUP_COMMON_OUT ]; then
         if [ -d ${common_out_dir} ] && [ ! -L ${common_out_dir} ]; then
             mv ${common_out_dir} ${common_out_dir}-${target_device}
             ln -s ${common_out_dir}-${target_device} ${common_out_dir}
@@ -2128,7 +2128,7 @@ unset f
 
 # Add completions
 check_bash_version && {
-    dirs="sdk/bash_completion vendor/cm/bash_completion"
+    dirs="sdk/bash_completion vendor/du/bash_completion"
     for dir in $dirs; do
     if [ -d ${dir} ]; then
         for f in `/bin/ls ${dir}/[a-z]*.bash 2> /dev/null`; do
