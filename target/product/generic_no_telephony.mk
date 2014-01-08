@@ -33,8 +33,7 @@ PRODUCT_PACKAGES := \
     InputDevices \
     Keyguard \
     LatinIME \
-    Launcher2 \
-    Music \
+    Launcher3 \
     OneTimeInitializer \
     PrintSpooler \
     Provision \
