@@ -1448,10 +1448,10 @@ DU_TARGET_PACKAGE := $(PRODUCT_OUT)/du-$(DU_VERSION).zip
 otapackage: $(INTERNAL_OTA_PACKAGE_TARGET)
 bacon: otapackage
 ifneq ($(TARGET_CUSTOM_RELEASETOOL),)
-        @echo "Running releasetool"
-        $(hide) OTAPACKAGE=$(INTERNAL_OTA_PACKAGE_TARGET) $(TARGET_CUSTOM_RELEASETOOL)
+	@echo "Running releasetool"
+	$(hide) OTAPACKAGE=$(INTERNAL_OTA_PACKAGE_TARGET) $(TARGET_CUSTOM_RELEASETOOL)
 else
-        $(hide) ./vendor/du/tools/squisher
+	$(hide) ./vendor/du/tools/squisher
 endif
 
 # -----------------------------------------------------------------
