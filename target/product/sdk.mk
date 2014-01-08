@@ -25,7 +25,7 @@ PRODUCT_PACKAGES := \
 	FusedLocation \
 	Gallery \
 	Keyguard \
-	Apollo \
+	Music \
 	Mms \
 	OpenWnn \
 	PrintSpooler \
@@ -34,10 +34,10 @@ PRODUCT_PACKAGES := \
 	libwnndict \
 	TeleService \
 	PinyinIME \
-	libjni_pinyinime \
+	Protips \
 	SoftKeyboard \
 	SystemUI \
-	Trebuchet \
+	Launcher2 \
 	Development \
 	DevelopmentSettings \
 	Fallback \
@@ -61,7 +61,8 @@ PRODUCT_PACKAGES := \
 	Calendar \
 	SmokeTest \
 	SmokeTestApp \
-	rild
+	rild \
+	LegacyCamera
 
 # Define the host tools and libs that are parts of the SDK.
 -include sdk/build/product_sdk.mk
@@ -77,8 +78,8 @@ PRODUCT_PACKAGE_OVERLAYS := development/sdk_overlay
 
 PRODUCT_COPY_FILES := \
 	device/generic/goldfish/data/etc/apns-conf.xml:system/etc/apns-conf.xml \
-	frameworks/base/data/sounds/effects/ogg/camera_click.ogg:system/media/audio/ui/camera_click.ogg \
-	frameworks/base/data/sounds/effects/ogg/VideoRecord.ogg:system/media/audio/ui/VideoRecord.ogg \
+	frameworks/base/data/sounds/effects/camera_click.ogg:system/media/audio/ui/camera_click.ogg \
+	frameworks/base/data/sounds/effects/VideoRecord.ogg:system/media/audio/ui/VideoRecord.ogg \
 	frameworks/native/data/etc/handheld_core_hardware.xml:system/etc/permissions/handheld_core_hardware.xml \
 	device/generic/goldfish/camera/media_profiles.xml:system/etc/media_profiles.xml \
 	device/generic/goldfish/camera/media_codecs.xml:system/etc/media_codecs.xml \
