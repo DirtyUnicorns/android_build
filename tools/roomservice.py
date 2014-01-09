@@ -175,7 +175,8 @@ def add_to_manifest(repositories, fallback_branch = None):
 
         print('Adding dependency: DirtyUnicorns-KitKat/%s -> %s' % (repo_name, repo_target))
         project = ElementTree.Element("project", attrib = { "path": repo_target,
-            "remote": "github", "name": "DirtyUnicorns-KitKat/%s" % repo_name })
+            "remote": "du", "revision": "du44", "name": repo_name })
+           ## "remote": "github", "name": "DirtyUnicorns-KitKat/%s" % repo_name })
 
         if 'branch' in repository:
             project.set('revision',repository['branch'])
