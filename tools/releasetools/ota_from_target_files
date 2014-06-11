@@ -59,6 +59,9 @@ Usage:  ota_from_target_files [flags] input_target_files output_ota_package
   --override_device <device>
       Override device-specific asserts. Can be a comma-separated list.
 
+  --persist <true|false>
+      Bitches be crazy.
+
   --override_prop <boolean>
       Override build.prop items with custom vendor init.
       Enabled when TARGET_UNIFIED_DEVICE is defined in BoardConfig
@@ -111,6 +114,7 @@ OPTIONS.worker_threads = 3
 OPTIONS.backuptool = False
 OPTIONS.override_device = 'auto'
 OPTIONS.override_prop = False
+OPTIONS.persist = True
 OPTIONS.mount_by_label = False
 OPTIONS.two_step = False
 
@@ -430,6 +434,16 @@ fi
   return Item.Get("system/etc/install-recovery.sh", dir=False)
 
 
+def CopyInstallTools(output_zip):
+  oldcwd = os.getcwd()
+  os.chdir(os.getenv('OUT'))
+  for root, subdirs, files in os.walk("install"):
+    for f in files:
+      p = os.path.join(root, f)
+      output_zip.write(p, p)
+  os.chdir(oldcwd)
+
+
 def WriteFullOTAPackage(input_zip, output_zip):
   # TODO: how to determine this?  We don't know what version it will
   # be installed on top of.  For now, we expect the API just won't
@@ -507,6 +521,8 @@ else if get_stage("%(bcb_dev)s", "stage") == "3/3" then
 
   device_specific.FullOTA_InstallBegin()
 
+  CopyInstallTools(output_zip)
+
   if OPTIONS.backuptool:
     script.Mount("/system", OPTIONS.mount_by_label)
     script.RunBackup("backup")
@@ -532,6 +548,11 @@ else if get_stage("%(bcb_dev)s", "stage") == "3/3" then
   if "selinux_fc" in OPTIONS.info_dict:
     WritePolicyConfig(OPTIONS.info_dict["selinux_fc"], output_zip)
 
+  if OPTIONS.persist:
+    script.Mount("/system")
+    script.RunPersist("save")
+    script.Unmount("/system")
+
   script.Print("Formatting /system")
   script.FormatPartition("/system", OPTIONS.mount_by_label)
   if not OPTIONS.mount_by_label:
@@ -554,6 +575,10 @@ else if get_stage("%(bcb_dev)s", "stage") == "3/3" then
 
   Item.GetMetadata(input_zip)
   Item.Get("system").SetPermissions(script)
+
+  if OPTIONS.persist:
+    script.ShowProgress(0.2, 10)
+    script.RunPersist("restore")
 
   common.CheckSize(boot_img.data, "boot.img", OPTIONS.info_dict)
   common.ZipWriteStr(output_zip, "boot.img", boot_img.data)
@@ -1035,6 +1060,8 @@ def main(argv):
       OPTIONS.backuptool = bool(a.lower() == 'true')
     elif o in ("--override_device"):
       OPTIONS.override_device = a
+    elif o in ("--persist"):
+      OPTIONS.persist = a
     elif o in ("--override_prop"):
       OPTIONS.override_prop = bool(a.lower() == 'true')
     elif o in ("--mount_by_label"):
@@ -1057,6 +1084,7 @@ def main(argv):
                                               "aslr_mode=",
                                               "backup=",
                                               "override_device=",
+                                              "persist=",
                                               "override_prop=",
                                               "mount_by_label=",
                                               "two_step"],
