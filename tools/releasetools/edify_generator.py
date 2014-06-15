@@ -118,11 +118,6 @@ class EdifyGenerator(object):
         self.script.append('delete("/system/bin/backuptool.sh");')
         self.script.append('delete("/system/bin/backuptool.functions");')
 
-  def RunPersist(self, arg):
-    self.script.append('package_extract_file("install/bin/persist.sh", "/tmp/persist.sh");')
-    self.script.append('set_perm(0, 0, 0777, "/tmp/persist.sh");')
-    self.script.append(('run_program("/tmp/persist.sh", "%s");' % arg))
-
   def ShowProgress(self, frac, dur):
     """Update the progress bar, advancing it over 'frac' over the next
     'dur' seconds.  'dur' may be zero to advance it via SetProgress
