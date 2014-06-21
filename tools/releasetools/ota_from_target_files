@@ -519,15 +519,28 @@ else if get_stage("%(bcb_dev)s", "stage") == "3/3" then
     script.Print("Formatting /data")
     script.FormatPartition("/data", OPTIONS.mount_by_label)
 
-  script.Print("==============================================");
-  script.Print("|                 Team D.I.R.T               |");
-  script.Print("|               PROUDLY PRESENTS             |");
-  script.Print("|                                            |");
-  script.Print("|            --  DIRTY UNICORNS --           |");
-  script.Print("|                                            |");
-  script.Print("|         SPECIAL THANKS TO OMNI-ROM         |");
-  script.Print("|     full credits are shown in rom thread   |");
-  script.Print("==============================================");
+  script.Print("")
+  script.Print("       || THANK YOU FOR FLASHING ||        ")
+  script.Print("")
+  script.Print("DDDDDDDDDDDDD        UUUUUUUU     UUUUUUUU");
+  script.Print("D::::::::::::DDD     U::::::U     U::::::U");
+  script.Print("D:::::::::::::::DD   U::::::U     U::::::U");
+  script.Print("DDD:::::DDDDD:::::D  UU:::::U     U:::::UU");
+  script.Print("  D:::::D    D:::::D  U:::::U     U:::::U ");
+  script.Print("  D:::::D     D:::::D U:::::D     D:::::U ");
+  script.Print("  D:::::D     D:::::D U:::::D     D:::::U ");
+  script.Print("  D:::::D     D:::::D U:::::D     D:::::U ");
+  script.Print("  D:::::D     D:::::D U:::::D     D:::::U ");
+  script.Print("  D:::::D     D:::::D U:::::D     D:::::U ");
+  script.Print("  D:::::D     D:::::D U:::::D     D:::::U ");
+  script.Print("  D:::::D    D:::::D  U::::::U   U::::::U ");
+  script.Print("DDD:::::DDDDD:::::D   U:::::::UUU:::::::U ");
+  script.Print("D:::::::::::::::DD     UU:::::::::::::UU  ");
+  script.Print("D::::::::::::DDD         UU:::::::::UU    ");
+  script.Print("DDDDDDDDDDDDD              UUUUUUUUU      ");
+  script.Print("")
+  script.Print("          ||| ANDROID 4.4.4 |||           ")
+  script.Print("")
 
   if "selinux_fc" in OPTIONS.info_dict:
     WritePolicyConfig(OPTIONS.info_dict["selinux_fc"], output_zip)
