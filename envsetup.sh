@@ -76,7 +76,6 @@ function check_product()
 
     if (echo -n $1 | grep -q -e "^du_") ; then
        DU_BUILD=$(echo -n $1 | sed -e 's/^du_//g')
-       export BUILD_NUMBER=$((date +%s%N ; echo $DU_BUILD; hostname) | openssl sha1 | sed -e 's/.*=//g; s/ //g' | cut -c1-10)
     else
        DU_BUILD=
     fi
