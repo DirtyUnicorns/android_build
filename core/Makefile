@@ -1884,20 +1884,41 @@ $(INTERNAL_OTA_PACKAGE_TARGET): $(BUILT_TARGET_FILES_PACKAGE) $(DISTTOOLS)
 	   --override_device=$(override_device) \
 	   $(BUILT_TARGET_FILES_PACKAGE) $@
 
-DU_TARGET_PACKAGE := $(PRODUCT_OUT)/du-$(ROM_VERSION).zip
+DU_TARGET_PACKAGE := $(PRODUCT_OUT)/$(DU_VERSION).zip
 
 .PHONY: otapackage bacon
 otapackage: $(INTERNAL_OTA_PACKAGE_TARGET)
 bacon: otapackage
 ifneq ($(TARGET_CUSTOM_RELEASETOOL),)
-	@echo "Running releasetool"
-	$(hide) OTAPACKAGE=$(PWD)/$(INTERNAL_OTA_PACKAGE_TARGET) $(TARGET_CUSTOM_RELEASETOOL)
-else
-	$(hide) OTAPACKAGE=$(PWD)/$(INTERNAL_OTA_PACKAGE_TARGET) ./vendor/du/tools/squisher
 endif
 	$(hide) ln -f $(INTERNAL_OTA_PACKAGE_TARGET) $(DU_TARGET_PACKAGE)
 	$(hide) $(MD5SUM) $(DU_TARGET_PACKAGE) > $(DU_TARGET_PACKAGE).md5sum
-	@echo -e "Package complete: $(DU_TARGET_PACKAGE)"
+
+	@echo -e ${CL_RED}""${CL_RED}
+	@echo -e ${CL_RED}".......................########..####.########..########.##....##......................"${CL_RED}
+	@echo -e ${CL_RED}".......................##.....##..##..##.....##....##.....##..##......................."${CL_RED}
+	@echo -e ${CL_RED}".......................##.....##..##..##.....##....##......####........................"${CL_RED}
+	@echo -e ${CL_RED}".......................##.....##..##..########.....##.......##........................."${CL_RED}
+	@echo -e ${CL_RED}".......................##.....##..##..##...##......##.......##........................."${CL_RED}
+	@echo -e ${CL_RED}".......................##.....##..##..##....##.....##.......##........................."${CL_RED}
+	@echo -e ${CL_RED}".......................########..####.##.....##....##.......##........................."${CL_RED}
+	@echo -e ${CL_RED}"......................................................................................."${CL_RED}
+	@echo -e ${CL_RED}"......................................................................................."${CL_RED}
+	@echo -e ${CL_RED}".........##.....##.##....##.####..######...#######..########..##....##..######........."${CL_RED}
+	@echo -e ${CL_RED}".........##.....##.###...##..##..##....##.##.....##.##.....##.###...##.##....##........"${CL_RED}
+	@echo -e ${CL_RED}".........##.....##.####..##..##..##.......##.....##.##.....##.####..##.##.............."${CL_RED}
+	@echo -e ${CL_RED}".........##.....##.##.##.##..##..##.......##.....##.########..##.##.##..######........."${CL_RED}
+	@echo -e ${CL_RED}".........##.....##.##..####..##..##.......##.....##.##...##...##..####.......##........"${CL_RED}
+	@echo -e ${CL_RED}".........##.....##.##...###..##..##....##.##.....##.##....##..##...###.##....##........"${CL_RED}
+	@echo -e ${CL_RED}"..........#######..##....##.####..######...#######..##.....##.##....##..######........."${CL_RED}
+	@echo -e ${CL_RST}""${CL_RST}
+	@echo -e ${CL_RST}""${CL_RST}
+	@echo -e ${CL_RST}"                    Build completed! Now Flash that shit and ENJOY!!                   "${CL_RST} 
+	@echo -e ${CL_RST}""${CL_RST}
+	@echo -e ${CL_RST}"$(DU_TARGET_PACKAGE)"${CL_RST}
+	@echo -e ${CL_RED}"======================================================================================="${CL_RED}
+	@echo -e ${CL_RED}"======================================================================================="${CL_RED}
+	@echo -e ${CL_RST}"Be yourself. Unless you can be a unicorn, In that case, you should always be a unicorn."${CL_RST}
 
 endif    # build_ota_package
 
