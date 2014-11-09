@@ -1084,25 +1084,6 @@ else
 recovery_wipe :=
 endif
 
-# Prior to A/B update, we used to have:
-#   boot.img + recovery-from-boot.p + recovery-resource.dat = recovery.img.
-# recovery-resource.dat is needed only if we carry a patch of the boot and
-# recovery images and invoke install-recovery.sh on the first boot post an
-# OTA update.
-#
-# We no longer need that if one of the following conditions holds:
-#   a) We carry a full copy of the recovery image
-#      (BOARD_USES_FULL_RECOVERY_IMAGE = true);
-#   b) We build a single image that contains boot and recovery both
-#      (BOARD_USES_RECOVERY_AS_BOOT = true).
-
-ifeq (,$(filter true, $(BOARD_USES_FULL_RECOVERY_IMAGE) $(BOARD_USES_RECOVERY_AS_BOOT)))
-# Named '.dat' so we don't attempt to use imgdiff for patching it.
-RECOVERY_RESOURCE_ZIP := $(TARGET_OUT)/etc/recovery-resource.dat
-else
-RECOVERY_RESOURCE_ZIP :=
-endif
-
 ifeq ($(TARGET_PRIVATE_RES_DIRS),)
   $(info No private recovery resources for TARGET_DEVICE $(TARGET_DEVICE))
 endif

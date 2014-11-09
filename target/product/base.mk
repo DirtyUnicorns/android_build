@@ -26,7 +26,6 @@ PRODUCT_PACKAGES += \
     android.test.mock \
     android.test.runner \
     app_process \
-    applypatch \
     audioserver \
     bit \
     blkid \
