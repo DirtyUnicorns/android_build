@@ -906,10 +906,7 @@ endif
 
 ifeq (,$(filter true, $(BOARD_USES_FULL_RECOVERY_IMAGE) $(BOARD_USES_RECOVERY_AS_BOOT)))
 # Named '.dat' so we don't attempt to use imgdiff for patching it.
-RECOVERY_RESOURCE_ZIP := $(TARGET_OUT)/etc/recovery-resource.dat
-else
-RECOVERY_RESOURCE_ZIP :=
-endif
+#RECOVERY_RESOURCE_ZIP := $(TARGET_OUT)/etc/recovery-resource.dat
 
 ifeq ($(TARGET_PRIVATE_RES_DIRS),)
   $(info No private recovery resources for TARGET_DEVICE $(TARGET_DEVICE))
