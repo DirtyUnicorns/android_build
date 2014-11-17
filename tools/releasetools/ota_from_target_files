@@ -444,11 +444,7 @@ def HasRecoveryPatch(target_files_zip):
     return False
 
 def HasVendorPartition(target_files_zip):
-  try:
-    target_files_zip.getinfo("VENDOR/")
-    return True
-  except KeyError:
-    return False
+  return False
 
 def GetOemProperty(name, oem_props, oem_dict, info_dict):
   if oem_props is not None and name in oem_props:
@@ -471,7 +467,7 @@ def GetImage(which, tmpdir, info_dict):
   # prebuilt image and file map are found in tmpdir they are used,
   # otherwise they are reconstructed from the individual files.
 
-  assert which in ("system", "vendor")
+  assert which in ("system")
 
   path = os.path.join(tmpdir, "IMAGES", which + ".img")
   mappath = os.path.join(tmpdir, "IMAGES", which + ".map")
@@ -491,9 +487,6 @@ def GetImage(which, tmpdir, info_dict):
     import add_img_to_target_files
     if which == "system":
       path = add_img_to_target_files.BuildSystem(
-          tmpdir, info_dict, block_list=mappath)
-    elif which == "vendor":
-      path = add_img_to_target_files.BuildVendor(
           tmpdir, info_dict, block_list=mappath)
 
   return sparse_img.SparseImage(path, mappath)
