@@ -24,6 +24,7 @@ PRODUCT_PACKAGES += \
     android.policy \
     android.test.runner \
     app_process \
+    applypatch \
     blkid \
     bmgr \
     bugreport \
@@ -54,6 +55,7 @@ PRODUCT_PACKAGES += \
     libinput \
     libinputflinger \
     libiprouteutil \
+    libjni_latinime \
     libjnigraphics \
     libldnhncr \
     libmedia \

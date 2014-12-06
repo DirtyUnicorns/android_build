@@ -39,10 +39,13 @@ except ImportError:
   urllib = imp.new_module('urllib')
   urllib.request = urllib2
 
+if not hasattr(__builtins__, 'xrange'):
+    xrange = range
+
 # Parse the command line
 parser = argparse.ArgumentParser(formatter_class=argparse.RawDescriptionHelpFormatter, description=textwrap.dedent('''\
     repopick.py is a utility to simplify the process of cherry picking
-    patches from DU's Gerrit instance.
+    patches from DU Gerrit instance.
 
     Given a list of change numbers, repopick will cd into the project path
     and cherry pick the latest patch available.
@@ -55,7 +58,7 @@ parser = argparse.ArgumentParser(formatter_class=argparse.RawDescriptionHelpForm
     The --abandon-first argument, when used in conjuction with the
     --start-branch option, will cause repopick to abandon the specified
     branch in all repos first before performing any cherry picks.'''))
-parser.add_argument('change_number', nargs='+', help='change number to cherry pick')
+parser.add_argument('change_number', nargs='*', help='change number to cherry pick')
 parser.add_argument('-i', '--ignore-missing', action='store_true', help='do not error out if a patch applies to a missing directory')
 parser.add_argument('-c', '--checkout', action='store_true', help='checkout instead of cherry pick')
 parser.add_argument('-s', '--start-branch', nargs=1, help='start the specified branch before cherry picking')
@@ -63,6 +66,9 @@ parser.add_argument('-a', '--abandon-first', action='store_true', help='before c
 parser.add_argument('-b', '--auto-branch', action='store_true', help='shortcut to "--start-branch auto --abandon-first --ignore-missing"')
 parser.add_argument('-q', '--quiet', action='store_true', help='print as little as possible')
 parser.add_argument('-v', '--verbose', action='store_true', help='print extra information to aid in debug')
+parser.add_argument('-f', '--force', action='store_true', help='force cherry pick even if commit has been merged')
+parser.add_argument('-p', '--pull', action='store_true', help='execute pull instead of cherry-pick')
+parser.add_argument('-t', '--topic', help='pick all commits from a specified topic')
 args = parser.parse_args()
 if args.start_branch == None and args.abandon_first:
     parser.error('if --abandon-first is set, you must also give the branch name with --start-branch')
@@ -73,6 +79,10 @@ if args.auto_branch:
         args.start_branch = ['auto']
 if args.quiet and args.verbose:
     parser.error('--quiet and --verbose cannot be specified together')
+if len(args.change_number) > 0 and args.topic:
+    parser.error('cannot specify a topic and change number(s) together')
+if len(args.change_number) == 0 and not args.topic:
+    parser.error('must specify at least one commit id or a topic')
 
 # Helper function to determine whether a path is an executable file
 def is_exe(fpath):
@@ -102,13 +112,13 @@ def which(program):
 def execute_cmd(cmd, exit_on_fail=True):
     if args.verbose:
         print('Executing: %s' % cmd)
-    if args.quiet:
-        cmd = cmd.replace(' && ', ' &> /dev/null && ')
-        cmd = cmd + " &> /dev/null"
+    #if args.quiet:
+    #    cmd = cmd.replace(' && ', ' &> /dev/null && ')
+    #    cmd = cmd + " &> /dev/null"
     ret = os.system(cmd)
     if ret and exit_on_fail:
         if not args.verbose:
-            sys.stderr.write('\nERROR: Command that failed:\n%s' % cmd)
+            sys.stderr.write('\nERROR: Command that failed:\n%s\n' % cmd)
         sys.exit(1)
     return ret
 
@@ -176,6 +186,47 @@ while(True):
     ppaths = re.split('\s*:\s*', pline.decode())
     project_name_to_path[ppaths[1]] = ppaths[0]
 
+# Get all commits for a specified topic
+if args.topic:
+    url = 'http://gerrit.dirtyunicorns.com/changes/?q=topic:%s' % args.topic
+    if args.verbose:
+        print('Fetching all commits from topic: %s\n' % args.topic)
+    f = urllib.request.urlopen(url)
+    d = f.read().decode("utf-8")
+    if args.verbose:
+        print('Result from request:\n' + d)
+
+    # Clean up the result
+    d = d.split(')]}\'\n')[1]
+    matchObj = re.match(r'\[\s*\]', d)
+    if matchObj:
+        sys.stderr.write('ERROR: Topic %s was not found on the server\n' % args.topic)
+        sys.exit(1)
+    d = re.sub(r'\[(.*)\]', r'\1', d)
+    if args.verbose:
+        print('Result from request:\n' + d)
+
+    data = json.loads(d)
+    changelist = []
+    for c in xrange(0, len(data)):
+        changelist.append(data[c]['_number'])
+
+    # Reverse the array as we want to pick the lowest one first
+    args.change_number = reversed(changelist)
+
+# Check for range of commits and rebuild array
+changelist = []
+for change in args.change_number:
+    c=str(change)
+    if '-' in c:
+        templist = c.split('-')
+        for i in range(int(templist[0]), int(templist[1]) + 1):
+            changelist.append(str(i))
+    else:
+        changelist.append(c)
+
+args.change_number = changelist
+
 # Iterate through the requested change numbers
 for change in args.change_number:
     if not args.quiet:
@@ -214,10 +265,16 @@ for change in args.change_number:
         date_fluff       = '.000000000'
         project_name     = data['project']
         change_number    = data['_number']
+        status           = data['status']
         current_revision = data['revisions'][data['current_revision']]
         patch_number     = current_revision['_number']
-        fetch_url        = current_revision['fetch']['http']['url']
-        fetch_ref        = current_revision['fetch']['http']['ref']
+        # Backwards compatibility
+        if 'http' in current_revision['fetch']:
+            fetch_url        = current_revision['fetch']['http']['url']
+            fetch_ref        = current_revision['fetch']['http']['ref']
+        else:
+            fetch_url        = current_revision['fetch']['anonymous http']['url']
+            fetch_ref        = current_revision['fetch']['anonymous http']['ref']
         author_name      = current_revision['commit']['author']['name']
         author_email     = current_revision['commit']['author']['email']
         author_date      = current_revision['commit']['author']['date'].replace(date_fluff, '')
@@ -225,6 +282,14 @@ for change in args.change_number:
         committer_email  = current_revision['commit']['committer']['email']
         committer_date   = current_revision['commit']['committer']['date'].replace(date_fluff, '')
         subject          = current_revision['commit']['subject']
+
+        # Check if commit has already been merged and exit if it has, unless -f is specified
+        if status == "MERGED":
+            if args.force:
+                sys.stdout.write("!! Force-picking a merged commit !!\n")
+            else:
+                sys.stderr.write("Commit already merged. Skipping the cherry pick.\nUse -f to force this pick.\n")
+                continue;
 
         # Convert the project name to a project path
         #   - check that the project path exists
@@ -252,13 +317,16 @@ for change in args.change_number:
 
         if args.verbose:
             print('Trying to fetch the change %d (Patch Set %d) from Gerrit')
-        cmd = 'cd %s && git fetch %s %s' % (project_path, fetch_url, fetch_ref)
+        if args.pull:
+            cmd = 'cd %s && git pull --no-edit %s %s' % (project_path, fetch_url, fetch_ref)
+        else:
+            cmd = 'cd %s && git fetch %s %s' % (project_path, fetch_url, fetch_ref)
         execute_cmd(cmd)
         # Check if it worked
         FETCH_HEAD = '%s/.git/FETCH_HEAD' % project_path
         if os.stat(FETCH_HEAD).st_size == 0:
             # That didn't work, print error and exit
-            sys.stderr.write('ERROR: Fetching change from Gerrit failed. Exiting...')
+            sys.stderr.write('ERROR: Fetching change from Gerrit failed. Exiting...\n')
             continue;
         # Perform the cherry-pick or checkout
         if args.checkout:
@@ -266,6 +334,7 @@ for change in args.change_number:
         else:
             cmd = 'cd %s && git cherry-pick FETCH_HEAD' % (project_path)
 
-        execute_cmd(cmd)
+        if not args.pull:
+            execute_cmd(cmd)
         if not args.quiet:
             print('Change #%d (Patch Set %d) %s into %s' % (change_number, patch_number, 'checked out' if args.checkout else 'cherry-picked', project_path))

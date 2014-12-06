@@ -185,14 +185,15 @@ all_product_configs := $(call get-product-makefiles,\
     $(SRC_TARGET_DIR)/product/AndroidProducts.mk)
 else
   ifneq ($(DU_BUILD),)
-    all_product_configs := device/*/$(DU_BUILD)/du.mk
+    all_product_configs := $(shell ls device/*/$(DU_BUILD)/du.mk)
   else
     # Read in all of the product definitions specified by the AndroidProducts.mk
     # files in the tree.
     all_product_configs := $(get-all-product-makefiles)
-  endif # DU_BUILD
+  endif
 endif
 
+ifeq ($(DU_BUILD),)
 # Find the product config makefile for the current product.
 # all_product_configs consists items like:
 # <product_name>:<path_to_the_product_makefile>
@@ -214,6 +215,10 @@ $(foreach f, $(all_product_configs),\
 _cpm_words :=
 _cpm_word1 :=
 _cpm_word2 :=
+else
+    current_product_makefile := $(strip $(all_product_configs))
+    all_product_makefiles := $(strip $(all_product_configs))
+endif
 current_product_makefile := $(strip $(current_product_makefile))
 all_product_makefiles := $(strip $(all_product_makefiles))
 
@@ -273,12 +278,14 @@ product_runtimes :=
 
 PRODUCTS.$(INTERNAL_PRODUCT).PRODUCT_PROPERTY_OVERRIDES += persist.sys.dalvik.vm.lib.2=$(DALVIK_VM_LIB)
 
-ifeq ($(words $(PRODUCT_RUNTIMES)),1)
-  # If we only have one runtime, we can strip classes.dex by default during dex_preopt
-  DEX_PREOPT_DEFAULT := true
-else
+ifeq ($(DEX_PREOPT_DEFAULT),)
+  ifeq ($(words $(PRODUCT_RUNTIMES)),1)
+    # If we only have one runtime, we can strip classes.dex by default during dex_preopt
+    DEX_PREOPT_DEFAULT := true
+  else
   # If we have more than one, we leave the classes.dex alone for post-boot analysis
-  DEX_PREOPT_DEFAULT := nostripping
+    DEX_PREOPT_DEFAULT := nostripping
+  endif
 endif
 
 #############################################################################
@@ -377,6 +384,12 @@ endif
 # The optional :<owner> is used to indicate the owner of a vendor file.
 PRODUCT_COPY_FILES := \
     $(strip $(PRODUCTS.$(INTERNAL_PRODUCT).PRODUCT_COPY_FILES))
+_boot_animation := $(strip $(lastword $(PRODUCTS.$(INTERNAL_PRODUCT).PRODUCT_BOOTANIMATION)))
+ifneq ($(_boot_animation),)
+PRODUCT_COPY_FILES += \
+    $(_boot_animation):system/media/bootanimation.zip
+endif
+_boot_animation :=
 
 # We might want to skip items listed in PRODUCT_COPY_FILES for
 # various reasons. This is useful for replacing a binary module with one
