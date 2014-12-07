@@ -1625,7 +1625,7 @@ else
 endif
 
 ifneq ($(DU_BUILD),)
-DU_TARGET_PACKAGE := $(PRODUCT_OUT)/$(DU_MOD_VERSION).zip
+DU_TARGET_PACKAGE := $(PRODUCT_OUT)/$(DU_VERSION).zip
 endif
 
 ifeq ($(TARGET_OTA_ASSERT_DEVICE),)
