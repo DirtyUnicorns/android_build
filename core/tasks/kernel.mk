@@ -135,30 +135,18 @@ endef
 
 ifeq ($(TARGET_ARCH),arm)
     ifneq ($(USE_CCACHE),)
-     # search executable
-      ifeq ($(USE_SYSTEM_CCACHE),)
-        ccache :=
-      else
-        ccache := $(shell which ccache)
-      endif
-      ifeq ($(ccache),)
-        ifneq ($(strip $(wildcard $(ANDROID_BUILD_TOP)/prebuilts/misc/$(HOST_PREBUILT_EXTRA_TAG)/ccache/ccache)),)
-          ccache := $(ANDROID_BUILD_TOP)/prebuilts/misc/$(HOST_PREBUILT_EXTRA_TAG)/ccache/ccache
-        else
-          ifneq ($(strip $(wildcard $(ANDROID_BUILD_TOP)/prebuilts/misc/$(HOST_PREBUILT_TAG)/ccache/ccache)),)
-            ccache := $(ANDROID_BUILD_TOP)/prebuilts/misc/$(HOST_PREBUILT_TAG)/ccache/ccache
-          endif
-        endif
-      endif
+      ccache := $(ANDROID_BUILD_TOP)/prebuilts/misc/$(HOST_PREBUILT_TAG)/ccache/ccache
+      # Check that the executable is here.
+      ccache := $(strip $(wildcard $(ccache)))
     endif
-    ifneq ($(TARGET_KERNEL_CUSTOM_TOOLCHAIN),)
-        ifeq ($(HOST_OS),darwin)
-            ARM_CROSS_COMPILE:=CROSS_COMPILE="$(ccache) $(ANDROID_BUILD_TOP)/prebuilt/darwin-x86/toolchain/$(TARGET_KERNEL_CUSTOM_TOOLCHAIN)"
-        else
-            ARM_CROSS_COMPILE:=CROSS_COMPILE="$(ccache) $(ANDROID_BUILD_TOP)/prebuilt/linux-x86/toolchain/$(TARGET_KERNEL_CUSTOM_TOOLCHAIN)"
-        endif
+    ifneq ($(TARGET_GCC_VERSION_ARM),)
+      ifeq ($(HOST_OS),darwin)
+        ARM_CROSS_COMPILE:=CROSS_COMPILE="$(ccache) $(ANDROID_BUILD_TOP)/prebuilts/gcc/darwin-x86/arm/arm-eabi-$(TARGET_GCC_VERSION_ARM)/bin/arm-eabi-"
+      else
+        ARM_CROSS_COMPILE:=CROSS_COMPILE="$(ccache) $(ANDROID_BUILD_TOP)/prebuilts/gcc/linux-x86/arm/arm-eabi-$(TARGET_GCC_VERSION_ARM)/bin/arm-eabi-"
+      endif
     else
-        ARM_CROSS_COMPILE:=CROSS_COMPILE="$(ccache) $(ARM_EABI_TOOLCHAIN)/arm-eabi-"
+      ARM_CROSS_COMPILE:=CROSS_COMPILE="$(ccache) $(ARM_EABI_TOOLCHAIN)/arm-eabi-"
     endif
     ccache = 
 endif

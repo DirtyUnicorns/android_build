@@ -22,7 +22,7 @@ Invoke ". build/envsetup.sh" from your shell to add the following functions to y
 - aospremote: Add git remote for matching AOSP repository
 - cafremote: Add git remote for matching CodeAurora repository.
 - cmremote: Add a git remote for matching CM repository.
-- duremote: Add a git remote for matching DU repository.
+- duremote: Add a git remote for matching du repository.
 - mka:      Builds using SCHED_BATCH on all processors
 - reposync: Parallel repo sync using ionice and SCHED_BATCH
 
@@ -635,8 +635,16 @@ function lunch()
 
     echo
 
+    if [[ $USE_PREBUILT_CHROMIUM -eq 1 ]]; then
+        chromium_prebuilt
+    else
+        # Unset flag in case user opts out later on
+        export PRODUCT_PREBUILT_WEBVIEWCHROMIUM=""
+    fi
+
     set_stuff_for_environment
     printconfig
+
 }
 
 # Tab completion for lunch.
@@ -1774,23 +1782,34 @@ function make()
     local secs=$(($tdiff % 60))
     echo
     if [ $ret -eq 0 ] ; then
-        echo -n -e "#### make completed successfully "
+        echo -n -e "Build Successful - "
     else
-        echo -n -e "#### make failed to build some targets "
+        echo -n -e "Build Failed - "
     fi
     if [ $hours -gt 0 ] ; then
-        printf "(%02g:%02g:%02g (hh:mm:ss))" $hours $mins $secs
+        printf "Total time elapsed: (%02g:%02g:%02g)" $hours $mins $secs
     elif [ $mins -gt 0 ] ; then
-        printf "(%02g:%02g (mm:ss))" $mins $secs
+        printf "Total time elapsed: (%02g:%02g)" $mins $secs
     elif [ $secs -gt 0 ] ; then
-        printf "(%s seconds)" $secs
+        printf "Total time elapsed: (%s seconds)" $secs
     fi
-    echo -e " ####"
     echo
     return $ret
 }
 
+function chromium_prebuilt() {
+    T=$(gettop)
+    export TARGET_DEVICE=$(get_build_var TARGET_DEVICE)
+    hash=$T/prebuilts/chromium/$TARGET_DEVICE/hash.txt
 
+    if [ -r $hash ] && [ $(git --git-dir=$T/external/chromium_org/.git --work-tree=$T/external/chromium_org rev-parse --verify HEAD) == $(cat $hash) ]; then
+        export PRODUCT_PREBUILT_WEBVIEWCHROMIUM=yes
+        echo "** Prebuilt Chromium is up-to-date; Will be used for build **"
+    else
+        export PRODUCT_PREBUILT_WEBVIEWCHROMIUM=no
+        echo "** Prebuilt Chromium out-of-date/not found; Will build from source **"
+    fi
+}
 
 if [ "x$SHELL" != "x/bin/bash" ]; then
     case `ps -o command -p $$` in

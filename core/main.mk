@@ -71,7 +71,7 @@ FORCE:
 
 # These goals don't need to collect and include Android.mks/CleanSpec.mks
 # in the source tree.
-dont_bother_goals := clean clobber dataclean installclean \
+dont_bother_goals := clean clobber dataclean installclean novo magicbrownies dirty appclean imgclean kernelclean systemclean recoveryclean rootclean \
     help out \
     snod systemimage-nodeps \
     stnod systemtarball-nodeps \
@@ -1060,6 +1060,67 @@ clean:
 
 .PHONY: clobber
 clobber: clean
+
+# This should be almost as good as a clobber but keeping many of the time intensive files - DHO
+.PHONY: novo
+novo:
+	@rm -rf $(OUT_DIR)/target/*
+	@echo -e ${CL_GRN}"Target directory removed."${CL_RST}
+
+# This is one step better then novo, only clearing target/product
+.PHONY: magicbrownies
+magicbrownies:
+	@rm -rf $(OUT_DIR)/target/product/*
+	@echo -e ${CL_GRN}"Enjoy your magical adventure!"${CL_RST}
+
+# Clears out zip and build.prop
+.PHONY: dirty
+dirty:
+	@rm -rf $(OUT_DIR)/target/product/*/system/build.prop
+	@rm -rf $(OUT_DIR)/target/product/*/*.zip
+	@rm -rf $(OUT_DIR)/target/product/*/*.md5sum
+	@rm -rf $(OUT_DIR)/target/product/*/*.txt
+	@echo -e ${CL_GRN}"build.prop, changelog and zip files erased"${CL_RST}
+
+# Clears out all apks
+.PHONY: appclean
+appclean:
+	@rm -rf $(OUT_DIR)/target/product/*/system/app
+	@rm -rf $(OUT_DIR)/target/product/*/system/priv-app
+	@echo -e ${CL_GRN}"All apks erased"${CL_RST}
+
+# Clears out all .img files
+.PHONY: imgclean
+imgclean:
+	@rm -rf $(OUT_DIR)/target/product/*/*.img
+	@echo -e ${CL_GRN}"All .img files erased"${CL_RST}
+
+# Clears out all kernel stuff
+.PHONY: kernelclean
+kernelclean:
+	@rm -rf $(OUT_DIR)/target/product/*/kernel
+	@rm -rf $(OUT_DIR)/target/product/*/boot.img
+	@echo -e ${CL_GRN}"All kernel components erased"${CL_RST}
+
+# Clears out all system stuff
+.PHONY: systemclean
+systemclean:
+	@rm -rf $(OUT_DIR)/target/product/*/system/
+	@rm -rf $(OUT_DIR)/target/product/*/system.img
+	@echo -e ${CL_GRN}"System components erased"${CL_RST}
+
+# Clears out all recovery stuff
+.PHONY: recoveryclean
+recoveryclean:
+	@rm -rf $(OUT_DIR)/target/product/*/recovery/
+	@rm -rf $(OUT_DIR)/target/product/*/recovery.img
+	@echo -e ${CL_GRN}"All recovery components erased"${CL_RST}
+
+# Clears out all root stuff
+.PHONY: rootclean
+rootclean:
+	@rm -rf $(OUT_DIR)/target/product/*/root/
+	@echo -e ${CL_GRN}"All root components erased"${CL_RST}
 
 # The rules for dataclean and installclean are defined in cleanbuild.mk.
 
