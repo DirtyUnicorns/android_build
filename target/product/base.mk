@@ -111,6 +111,7 @@ PRODUCT_PACKAGES += \
     settings \
     svc \
     tc \
+    tm \
     vdc \
     vold \
     wm
