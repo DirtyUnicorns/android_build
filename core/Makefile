@@ -1670,11 +1670,16 @@ $(INTERNAL_OTA_PACKAGE_TARGET): $(BUILT_TARGET_FILES_PACKAGE) $(DISTTOOLS)
 
 .PHONY: otapackage bacon bootzip
 otapackage: $(INTERNAL_OTA_PACKAGE_TARGET)
-
 bacon: check_bacon otapackage
 ifneq ($(DU_BUILD),)
 	$(hide) ln -f $(INTERNAL_OTA_PACKAGE_TARGET) $(DU_TARGET_PACKAGE)
 	$(hide) $(MD5SUM) $(DU_TARGET_PACKAGE) > $(DU_TARGET_PACKAGE).md5sum
+ifeq ($(USE_PREBUILT_CHROMIUM),true)
+ifneq ($(PRODUCT_PREBUILT_WEBVIEWCHROMIUM),yes)
+	@echo "Running Chromium prebuilt setup script..."
+	$(hide) . $(TOPDIR)vendor/du/utils/chromium_prebuilt.sh $(TOP)
+endif
+endif
 	@echo -e ${CL_RED}""${CL_RED}
 	@echo -e ${CL_RED}".......................########..####.########..########.##....##......................"${CL_RED}
 	@echo -e ${CL_RED}".......................##.....##..##..##.....##....##.....##..##......................."${CL_RED}
