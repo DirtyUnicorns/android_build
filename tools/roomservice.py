@@ -15,11 +15,13 @@
 # limitations under the License.
 
 import os
+import os.path
 import sys
 import urllib2
 import json
 import re
 from xml.etree import ElementTree
+from urllib2 import urlopen, Request
 
 product = sys.argv[1];
 
@@ -40,7 +42,13 @@ repositories = []
 
 page = 1
 while not depsonly:
-    result = json.loads(urllib2.urlopen("https://api.github.com/users/DirtyUnicorns/repos?page=%d" % page).read())
+    request = Request("https://api.github.com/users/DirtyUnicorns/repos?page=%d" % page)
+    api_file = os.getenv("HOME") + '/api_token'
+    if (os.path.isfile(api_file)):
+        infile = open(api_file, 'r')
+        token = infile.readline()
+        request.add_header('Authorization', 'token %s' % token.strip())
+    result = json.loads(urllib2.urlopen(request).read())
     if len(result) == 0:
         break
     for res in result:
