@@ -2002,7 +2002,7 @@ function chromium_prebuilt() {
         echo "** Prebuilt Chromium is up-to-date; Will be used for build **"
     else
         export PRODUCT_PREBUILT_WEBVIEWCHROMIUM=no
-        echo "** Prebuilt Chromium out-of-date/not found; Will build from source **"
+        echo "** Prebuilt Chromium out-of-date/not found or the flag is not set; Will build from source **"
     fi
 }
 
