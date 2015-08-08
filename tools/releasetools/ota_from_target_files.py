@@ -135,6 +135,7 @@ OPTIONS.no_signing = False
 OPTIONS.block_based = False
 OPTIONS.updater_binary = None
 OPTIONS.oem_source = None
+OPTIONS.full_bootloader = False
 OPTIONS.backuptool = False
 OPTIONS.fallback_to_full = True
 OPTIONS.override_device = 'auto'
@@ -1712,9 +1713,8 @@ def main(argv):
 
     cache_size = OPTIONS.info_dict.get("cache_size", None)
     if cache_size is None:
-      raise RuntimeError("can't determine the cache partition size")
+      print "--- can't determine the cache partition size ---"
     OPTIONS.cache_size = cache_size
-
     if OPTIONS.incremental_source is None:
       WriteFullOTAPackage(input_zip, output_zip)
       if OPTIONS.package_key is None:
