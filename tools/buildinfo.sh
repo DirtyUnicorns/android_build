@@ -17,7 +17,6 @@ echo "ro.build.user=$USER"
 echo "ro.build.host=`hostname`"
 echo "ro.build.tags=$BUILD_VERSION_TAGS"
 echo "ro.build.flavor=$TARGET_BUILD_FLAVOR"
-echo "ro.product.model=$PRODUCT_MODEL"
 echo "ro.product.brand=$PRODUCT_BRAND"
 echo "ro.product.name=$PRODUCT_NAME"
 echo "ro.product.board=$TARGET_BOOTLOADER_BOARD_NAME"
@@ -44,19 +43,19 @@ fi
 echo "ro.wifi.channels=$PRODUCT_DEFAULT_WIFI_CHANNELS"
 echo "ro.board.platform=$TARGET_BOARD_PLATFORM"
 
+echo "# ro.build.product is obsolete; use ro.product.device"
+echo "ro.build.product=$TARGET_DEVICE"
+
 if [ "$TARGET_UNIFIED_DEVICE" == "" ] ; then
-  echo "# ro.build.product is obsolete; use ro.product.device"
-  echo "ro.build.product=$TARGET_DEVICE"
   echo "ro.product.model=$PRODUCT_MODEL"
   echo "ro.product.device=$TARGET_DEVICE"
   echo "# Do not try to parse description or fingerprint"
   echo "ro.build.description=$PRIVATE_BUILD_DESC"
   echo "ro.build.fingerprint=$BUILD_FINGERPRINT"
-fi
-if [ -n "$BUILD_THUMBPRINT" ] ; then
-  echo "# Do not try to parse thumbprint"
-  echo "ro.build.thumbprint=$BUILD_THUMBPRINT"
-fi
+  if [ -n "$BUILD_THUMBPRINT" ] ; then
+    echo "ro.build.thumbprint=$BUILD_THUMBPRINT"
+  fi
+fi  
 echo "ro.du.device=$TARGET_DEVICE"
 echo "ro.du.model=$PRODUCT_MODEL"
 echo "ro.build.characteristics=$TARGET_AAPT_CHARACTERISTICS"
