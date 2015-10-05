@@ -20,8 +20,9 @@ Invoke ". build/envsetup.sh" from your shell to add the following functions to y
 - sepgrep:   Greps on all local sepolicy files.
 - sgrep:     Greps on all local source files.
 - godir:     Go to the directory containing a file.
+- pushboot:	 Push a file from your OUT dir to your phone and reboots it, using absolute path.
 
-Environment options:
+Environemnt options:
 - SANITIZE_HOST: Set to 'true' to use ASAN for all host modules. Note that
                  ASAN_OPTIONS=detect_leaks=0 will be set by default until the
                  build is leak-check clean.
@@ -723,6 +724,21 @@ function tapas()
     set_stuff_for_environment
     printconfig
     destroy_build_var_cache
+}
+
+function pushboot() {
+    if [ ! -f $OUT/$* ]; then
+        echo "File not found: $OUT/$*"
+        return 1
+    fi
+
+    adb root
+    sleep 1
+    adb wait-for-device
+    adb remount
+
+    adb push $OUT/$* /$*
+    adb reboot
 }
 
 function gettop
@@ -1527,9 +1543,6 @@ function godir () {
     \cd $T/$pathname
 }
 
-<<<<<<< HEAD
-# Force JAVA_HOME to point to java 1.7/1.8 if it isn't already set.
-=======
 # Make using all available CPUs
 function mka() {
     case `uname -s` in
@@ -1542,9 +1555,7 @@ function mka() {
     esac
 }
 
-# Force JAVA_HOME to point to java 1.6 if it isn't already set
-
->>>>>>> 442d7b8... Add bacon target, and mka/brunch/breakfast aliases
+# Force JAVA_HOME to point to java 1.7/1.8 if it isn't already set.
 function set_java_home() {
     # Clear the existing JAVA_HOME value if we set it ourselves, so that
     # we can reset it later, depending on the version of java the build
