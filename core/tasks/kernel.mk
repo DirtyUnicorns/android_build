@@ -14,8 +14,6 @@
 
 # Android makefile to build kernel as a part of Android Build
 
--include vendor/du/config/branding.mk
-
 TARGET_AUTO_KDIR := $(shell echo $(TARGET_DEVICE_DIR) | sed -e 's/^device/kernel/g')
 
 ## Externally influenced variables
