@@ -135,6 +135,7 @@ function check_product()
     else
        DU_BUILD=
     fi
+    export DU_BUILD
 
         TARGET_PRODUCT=$1 \
         TARGET_BUILD_VARIANT= \
