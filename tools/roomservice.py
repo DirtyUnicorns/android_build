@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-# Copyright (C) 2012-2013, The CyanogenMod Project
+# Copyright (C) 2012 The CyanogenMod Project
 # Copyright (C) 2012/2013 SlimRoms Project
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -14,30 +14,14 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from __future__ import print_function
-
-import base64
-import json
-import netrc
 import os
-import re
+import os.path
 import sys
-try:
-  # For python3
-  import urllib.error
-  import urllib.parse
-  import urllib.request
-except ImportError:
-  # For python2
-  import imp
-  import urllib2
-  import urlparse
-  urllib = imp.new_module('urllib')
-  urllib.error = urllib2
-  urllib.parse = urlparse
-  urllib.request = urllib2
-
+import urllib2
+import json
+import re
 from xml.etree import ElementTree
+from urllib2 import urlopen, Request
 
 product = sys.argv[1];
 
@@ -52,46 +36,39 @@ except:
     device = product
 
 if not depsonly:
-    print("Device %s not found. Attempting to retrieve device repository from DirtyUnicorns Github (http://github.com/DirtyUnicorns)." % device)
+    print "Device %s not found. Attempting to retrieve device repository from DU Github (http://github.com/DirtyUnicorns)." % device
 
 repositories = []
 
-try:
-    authtuple = netrc.netrc().authenticators("api.github.com")
-
-    if authtuple:
-        githubauth = base64.encodestring('%s:%s' % (authtuple[0], authtuple[2])).replace('\n', '')
-    else:
-        githubauth = None
-except:
-    githubauth = None
-
-def add_auth(githubreq):
-    if githubauth:
-        githubreq.add_header("Authorization","Basic %s" % githubauth)
-
-if not depsonly:
-    githubreq = urllib.request.Request("https://api.github.com/search/repositories?q=%s+user:DirtyUnicorns+in:name+fork:true" % device)
-    add_auth(githubreq)
-    try:
-        result = json.loads(urllib.request.urlopen(githubreq).read().decode())
-    except urllib.error.URLError:
-        print("Failed to search GitHub")
-        sys.exit()
-    except ValueError:
-        print("Failed to parse return data from GitHub")
-        sys.exit()
-    for res in result.get('items', []):
+page = 1
+while not depsonly:
+    request = Request("https://api.github.com/users/DirtyUnicorns/repos?page=%d" % page)
+    api_file = os.getenv("HOME") + '/api_token'
+    if (os.path.isfile(api_file)):
+        infile = open(api_file, 'r')
+        token = infile.readline()
+        request.add_header('Authorization', 'token %s' % token.strip())
+    result = json.loads(urllib2.urlopen(request).read())
+    if len(result) == 0:
+        break
+    for res in result:
         repositories.append(res)
+    page = page + 1
 
 local_manifests = r'.repo/local_manifests'
 if not os.path.exists(local_manifests): os.makedirs(local_manifests)
 
 def exists_in_tree(lm, repository):
     for child in lm.getchildren():
+        if child.attrib['path'].endswith(repository):
+            return child
+    return None
+
+def exists_in_tree_device(lm, repository):
+    for child in lm.getchildren():
         if child.attrib['name'].endswith(repository):
-            return True
-    return False
+            return child
+    return None
 
 # in-place prettyprint formatter
 def indent(elem, level=0):
@@ -108,12 +85,6 @@ def indent(elem, level=0):
     else:
         if level and (not elem.tail or not elem.tail.strip()):
             elem.tail = i
-
-def get_default_revision():
-    m = ElementTree.parse(".repo/manifest.xml")
-    d = m.findall('default')[0]
-    r = d.get('revision')
-    return r.replace('refs/heads/', '').replace('refs/tags/', '')
 
 def get_from_manifest(devicename):
     try:
@@ -139,7 +110,7 @@ def get_from_manifest(devicename):
 
     return None
 
-def is_in_manifest(projectname):
+def is_in_manifest(projectname, branch):
     try:
         lm = ElementTree.parse(".repo/local_manifests/du_manifest.xml")
         lm = lm.getroot()
@@ -147,23 +118,12 @@ def is_in_manifest(projectname):
         lm = ElementTree.Element("manifest")
 
     for localpath in lm.findall("project"):
-        if localpath.get("name") == projectname:
-            return 1
-
-    ## Search in main manifest, too
-    try:
-        lm = ElementTree.parse(".repo/manifest.xml")
-        lm = lm.getroot()
-    except:
-        lm = ElementTree.Element("manifest")
-
-    for localpath in lm.findall("project"):
-        if localpath.get("name") == projectname:
+        if localpath.get("name") == projectname and localpath.get("revision") == branch:
             return 1
 
     return None
 
-def add_to_manifest(repositories, fallback_branch = None):
+def add_to_manifest_dependencies(repositories):
     try:
         lm = ElementTree.parse(".repo/local_manifests/du_manifest.xml")
         lm = lm.getroot()
@@ -173,34 +133,73 @@ def add_to_manifest(repositories, fallback_branch = None):
     for repository in repositories:
         repo_name = repository['repository']
         repo_target = repository['target_path']
-        if exists_in_tree(lm, repo_name):
-            print('DirtyUnicorns/%s already exists' % (repo_name))
+        existing_project = exists_in_tree(lm, repo_target)
+        if existing_project != None:
+            if existing_project.attrib['name'] != repository['repository']:
+                print 'Updating dependency %s' % (repo_name)
+                existing_project.set('name', repository['repository'])
+            if existing_project.attrib['revision'] == repository['branch']:
+                print 'DirtyUnicorns/%s already exists' % (repo_name)
+            else:
+                print 'updating branch for %s to %s' % (repo_name, repository['branch'])
+                existing_project.set('revision', repository['branch'])
             continue
 
-        print('Adding dependency: DirtyUnicorns/%s -> %s' % (repo_name, repo_target))
+        print 'Adding dependency: %s -> %s' % (repo_name, repo_target)
         project = ElementTree.Element("project", attrib = { "path": repo_target,
-            "remote": "du", "name": "%s" % repo_name })
+            "remote": "github", "name": repo_name, "revision": "m" })
 
         if 'branch' in repository:
             project.set('revision',repository['branch'])
-        elif fallback_branch:
-            print("Using fallback branch %s for %s" % (fallback_branch, repo_name))
-            project.set('revision', fallback_branch)
-        else:
-            print("Using default branch for %s" % repo_name)
 
         lm.append(project)
 
     indent(lm, 0)
-    raw_xml = ElementTree.tostring(lm).decode()
+    raw_xml = ElementTree.tostring(lm)
     raw_xml = '<?xml version="1.0" encoding="UTF-8"?>\n' + raw_xml
 
     f = open('.repo/local_manifests/du_manifest.xml', 'w')
     f.write(raw_xml)
     f.close()
 
-def fetch_dependencies(repo_path, fallback_branch = None):
-    print('Looking for dependencies')
+def add_to_manifest(repositories):
+    try:
+        lm = ElementTree.parse(".repo/local_manifests/du_manifest.xml")
+        lm = lm.getroot()
+    except:
+        lm = ElementTree.Element("manifest")
+
+    for repository in repositories:
+        repo_name = repository['repository']
+        repo_target = repository['target_path']
+        existing_project = exists_in_tree_device(lm, repo_name)
+        if existing_project != None:
+            if existing_project.attrib['revision'] == repository['branch']:
+                print 'DirtyUnicorns/%s already exists' % (repo_name)
+            else:
+                print 'updating branch for DirtyUnicorns/%s to %s' % (repo_name, repository['branch'])
+                existing_project.set('revision', repository['branch'])
+            continue
+
+        print 'Adding dependency: DirtyUnicorns/%s -> %s' % (repo_name, repo_target)
+        project = ElementTree.Element("project", attrib = { "path": repo_target,
+            "remote": "github", "name": "DirtyUnicorns/%s" % repo_name, "revision": "m" })
+
+        if 'branch' in repository:
+            project.set('revision', repository['branch'])
+
+        lm.append(project)
+
+    indent(lm, 0)
+    raw_xml = ElementTree.tostring(lm)
+    raw_xml = '<?xml version="1.0" encoding="UTF-8"?>\n' + raw_xml
+
+    f = open('.repo/local_manifests/du_manifest.xml', 'w')
+    f.write(raw_xml)
+    f.close()
+
+def fetch_dependencies(repo_path):
+    print 'Looking for dependencies'
     dependencies_path = repo_path + '/du.dependencies'
     syncable_repos = []
 
@@ -210,34 +209,28 @@ def fetch_dependencies(repo_path, fallback_branch = None):
         fetch_list = []
 
         for dependency in dependencies:
-            if not is_in_manifest("%s" % dependency['repository']):
+            if not is_in_manifest("%s" % dependency['repository'], "%s" % dependency['branch']):
                 fetch_list.append(dependency)
                 syncable_repos.append(dependency['target_path'])
 
         dependencies_file.close()
 
         if len(fetch_list) > 0:
-            print('Adding dependencies to manifest')
-            add_to_manifest(fetch_list, fallback_branch)
+            print 'Adding dependencies to manifest'
+            add_to_manifest_dependencies(fetch_list)
     else:
-        print('Dependencies file not found, bailing out.')
+        print 'Dependencies file not found, bailing out.'
 
     if len(syncable_repos) > 0:
-        print('Syncing dependencies')
+        print 'Syncing dependencies'
         os.system('repo sync %s' % ' '.join(syncable_repos))
-
-    for deprepo in syncable_repos:
-        fetch_dependencies(deprepo)
-
-def has_branch(branches, revision):
-    return revision in [branch['name'] for branch in branches]
 
 if depsonly:
     repo_path = get_from_manifest(device)
     if repo_path:
         fetch_dependencies(repo_path)
     else:
-        print("Trying dependencies-only mode on a non-existing device tree?")
+        print "Trying dependencies-only mode on a non-existing device tree?"
 
     sys.exit()
 
@@ -245,52 +238,19 @@ else:
     for repository in repositories:
         repo_name = repository['name']
         if repo_name.startswith("android_device_") and repo_name.endswith("_" + device):
-            print("Found repository: %s" % repository['name'])
-            
+            print "Found repository: %s" % repository['name']
             manufacturer = repo_name.replace("android_device_", "").replace("_" + device, "")
-            
-            default_revision = get_default_revision()
-            print("Default revision: %s" % default_revision)
-            print("Checking branch info")
-            githubreq = urllib.request.Request(repository['branches_url'].replace('{/branch}', ''))
-            add_auth(githubreq)
-            result = json.loads(urllib.request.urlopen(githubreq).read().decode())
 
-            ## Try tags, too, since that's what releases use
-            if not has_branch(result, default_revision):
-                githubreq = urllib.request.Request(repository['tags_url'].replace('{/tag}', ''))
-                add_auth(githubreq)
-                result.extend (json.loads(urllib.request.urlopen(githubreq).read().decode()))
-            
             repo_path = "device/%s/%s" % (manufacturer, device)
-            adding = {'repository':repo_name,'target_path':repo_path}
-            
-            fallback_branch = None
-            if not has_branch(result, default_revision):
-                if os.getenv('ROOMSERVICE_BRANCHES'):
-                    fallbacks = list(filter(bool, os.getenv('ROOMSERVICE_BRANCHES').split(' ')))
-                    for fallback in fallbacks:
-                        if has_branch(result, fallback):
-                            print("Using fallback branch: %s" % fallback)
-                            fallback_branch = fallback
-                            break
 
-                if not fallback_branch:
-                    print("Default revision %s not found in %s. Bailing." % (default_revision, repo_name))
-                    print("Branches found:")
-                    for branch in [branch['name'] for branch in result]:
-                        print(branch)
-                    print("Use the ROOMSERVICE_BRANCHES environment variable to specify a list of fallback branches.")
-                    sys.exit()
+            add_to_manifest([{'repository':repo_name,'target_path':repo_path,'branch':'m'}])
 
-            add_to_manifest([adding], fallback_branch)
-
-            print("Syncing repository to retrieve project.")
+            print "Syncing repository to retrieve project."
             os.system('repo sync %s' % repo_path)
-            print("Repository synced!")
+            print "Repository synced!"
 
-            fetch_dependencies(repo_path, fallback_branch)
-            print("Done")
+            fetch_dependencies(repo_path)
+            print "Done"
             sys.exit()
 
-print("Repository for %s not found in the DirtyUnicorns Github repository list. If this is in error, you may need to manually add it to your local_manifests/du_manifest.xml." % device)
+print "Repository for %s not found in the DU Github repository list. If this is in error, you may need to manually add it to .repo/local_manifests/du_manifest.xml" % device
