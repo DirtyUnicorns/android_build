@@ -1802,7 +1802,7 @@ endif
 	@echo -e ${CL_RED}"..........#######..##....##.####..######...#######..##.....##.##....##..######........."${CL_RED}
 	@echo -e ${CL_RST}""${CL_RST}
 	@echo -e ${CL_RST}""${CL_RST}
-	@echo -e ${CL_RST}"                    Build completed! Now Flash that shit and ENJOY!!                   "${CL_RST}
+	@echo -e ${CL_RST}"                    Build completed! Now flash dat shit and enjoy the ride!                   "${CL_RST}
 	@echo -e ${CL_RST}""${CL_RST}
 	@echo -e ${CL_RST}"$(DU_TARGET_PACKAGE)"${CL_RST}
 	@echo -e ${CL_RED}"======================================================================================="${CL_RED}
