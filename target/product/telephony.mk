@@ -20,6 +20,7 @@
 PRODUCT_PACKAGES := \
     CarrierConfig \
     Dialer \
+    messaging \
     CallLogBackup \
     CellBroadcastReceiver \
     EmergencyInfo \
