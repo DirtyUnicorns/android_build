@@ -469,12 +469,12 @@ else if get_stage("%(bcb_dev)s") == "3/3" then
   script.Print("D:::::::::::::::DD   U::::::U     U::::::U");
   script.Print("DDD:::::DDDDD:::::D  UU:::::U     U:::::UU");
   script.Print("  D:::::D    D:::::D  U:::::U     U:::::U ");
-  script.Print("  D:::::D     D:::::D U:::::D     D:::::U ");
-  script.Print("  D:::::D     D:::::D U:::::D     D:::::U ");
-  script.Print("  D:::::D     D:::::D U:::::D     D:::::U ");
-  script.Print("  D:::::D     D:::::D U:::::D     D:::::U ");
-  script.Print("  D:::::D     D:::::D U:::::D     D:::::U ");
-  script.Print("  D:::::D     D:::::D U:::::D     D:::::U ");
+  script.Print("  D:::::D     D:::::D U:::::U     U:::::U ");
+  script.Print("  D:::::D     D:::::D U:::::U     U:::::U ");
+  script.Print("  D:::::D     D:::::D U:::::U     U:::::U ");
+  script.Print("  D:::::D     D:::::D U:::::U     U:::::U ");
+  script.Print("  D:::::D     D:::::D U:::::U     U:::::U ");
+  script.Print("  D:::::D     D:::::D U:::::U     U:::::U ");
   script.Print("  D:::::D    D:::::D  U::::::U   U::::::U ");
   script.Print("DDD:::::DDDDD:::::D   U:::::::UUU:::::::U ");
   script.Print("D:::::::::::::::DD     UU:::::::::::::UU  ");
