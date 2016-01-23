@@ -703,7 +703,7 @@ endif
 RSCOMPAT_32BIT_ONLY_API_LEVELS := 8 9 10 11 12 13 14 15 16 17 18 19 20
 RSCOMPAT_NO_USAGEIO_API_LEVELS := 8 9 10 11 12 13
 
-# Rules for QCOM targets
-include $(BUILD_SYSTEM)/qcom_target.mk
+# Vendor Sepolicy
+include vendor/du/sepolicy/sepolicy.mk
 
 include $(BUILD_SYSTEM)/dumpvar.mk
