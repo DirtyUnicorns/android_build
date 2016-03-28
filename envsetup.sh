@@ -463,7 +463,7 @@ function choosecombo()
     printconfig
 }
 
-# Clear this variable.  It will be built up again when the vendorsetup.sh
+# Clear this variable.  It will be built up again when the CAF vendorsetup.sh
 # files are included at the end of this file.
 unset LUNCH_MENU_CHOICES
 function add_lunch_combo()
@@ -517,7 +517,7 @@ function breakfast()
     DU_DEVICES_ONLY="true"
     unset LUNCH_MENU_CHOICES
     add_lunch_combo full-eng
-    for f in `/bin/ls vendor/du/vendorsetup.sh 2> /dev/null`
+    for f in `/bin/ls vendor/du/caf-vendorsetup.sh 2> /dev/null`
         do
             echo "including $f"
             . $f
@@ -1704,9 +1704,9 @@ if [ "x$SHELL" != "x/bin/bash" ]; then
     esac
 fi
 
-# Execute the contents of any vendorsetup.sh files we can find.
-for f in `test -d device && find -L device -maxdepth 4 -name 'vendorsetup.sh' 2> /dev/null | sort` \
-         `test -d vendor && find -L vendor -maxdepth 4 -name 'vendorsetup.sh' 2> /dev/null | sort`
+# Execute the contents of any caf vendorsetup.sh files we can find.
+for f in `test -d device && find -L device -maxdepth 4 -name 'caf-vendorsetup.sh' 2> /dev/null | sort` \
+         `test -d vendor && find -L vendor -maxdepth 4 -name 'caf-vendorsetup.sh' 2> /dev/null | sort`
 do
     echo "including $f"
     . $f
