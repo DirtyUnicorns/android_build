@@ -2923,7 +2923,7 @@ endef
 include $(BUILD_SYSTEM)/distdir.mk
 
 # Include any vendor specific definitions.mk file
--include $(TOPDIR)vendor/*/build/core/definitions.mk
+-include $(TOPDIR)vendor/du/config/definitions.mk
 -include $(TOPDIR)device/*/build/core/definitions.mk
 -include $(TOPDIR)product/*/build/core/definitions.mk
 
