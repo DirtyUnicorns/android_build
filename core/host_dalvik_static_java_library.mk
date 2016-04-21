@@ -55,6 +55,5 @@ $(full_classes_jack): $(java_sources) $(java_resource_sources) $(full_jack_deps)
 	@echo -e ${CL_GRN}"Building with Jack:"${CL_RST}" $@"
 	$(java-to-jack)
 
-USE_CORE_LIB_BOOTCLASSPATH :=
 LOCAL_IS_STATIC_JAVA_LIBRARY :=
 endif
