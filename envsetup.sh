@@ -341,7 +341,6 @@ function addcompletions()
     dir="sdk/bash_completion"
     if [ -d ${dir} ]; then
         for f in `/bin/ls ${dir}/[a-z]*.bash 2> /dev/null`; do
-            echo "including $f"
             . $f
         done
     fi
@@ -535,9 +534,23 @@ function print_lunch_menu()
 {
     local uname=$(uname)
     echo
-    echo "You're building on" $uname
-    echo
-    echo "Lunch menu... pick a combo:"
+
+    echo ""
+    tput setaf 1;
+    tput bold;
+    echo "·▄▄▄▄  ▪  ▄▄▄  ▄▄▄▄▄ ▄· ▄▌    ▄• ▄▌ ▐ ▄ ▪   ▄▄·       ▄▄▄   ▐ ▄ .▄▄ · "
+    echo "██▪ ██ ██ ▀▄ █·•██  ▐█▪██▌    █▪██▌•█▌▐███ ▐█ ▌▪▪     ▀▄ █·•█▌▐█▐█ ▀. "
+    echo "▐█· ▐█▌▐█·▐▀▀▄  ▐█.▪▐█▌▐█▪    █▌▐█▌▐█▐▐▌▐█·██ ▄▄ ▄█▀▄ ▐▀▀▄ ▐█▐▐▌▄▀▀▀█▄"
+    echo "██. ██ ▐█▌▐█•█▌ ▐█▌· ▐█▀·.    ▐█▄█▌██▐█▌▐█▌▐███▌▐█▌.▐▌▐█•█▌██▐█▌▐█▄▪▐█"
+    echo "▀▀▀▀▀• ▀▀▀.▀  ▀ ▀▀▀   ▀ •      ▀▀▀ ▀▀ █▪▀▀▀·▀▀▀  ▀█▄▀▪.▀  ▀▀▀ █▪ ▀▀▀▀ "
+    tput sgr0;
+    echo ""
+    echo "                      Welcome to the device menu                      "
+    echo ""
+    tput bold;
+    echo "     Below are all the devices currently available to be compiled     "
+    tput sgr0;
+    echo ""
 
     local i=1
     local choice
@@ -556,7 +569,7 @@ function brunch()
     if [ $? -eq 0 ]; then
         time mka bacon
     else
-        echo "No such item in brunch menu. Try 'breakfast'"
+        echo "Do you know what you're doing?"
         return 1
     fi
     return $?
@@ -601,7 +614,10 @@ function lunch()
         answer=$1
     else
         print_lunch_menu
-        echo -n "Which would you like? [aosp_arm-eng] "
+        tput setaf 2;
+        tput bold;
+        echo -n "Go ahead and pick a number... "
+        tput sgr0;
         read answer
     fi
 
@@ -623,8 +639,9 @@ function lunch()
 
     if [ -z "$selection" ]
     then
-        echo
-        echo "Invalid lunch combo: $answer"
+        echo ""
+        echo "Come on man, pay attention to what you're doing"
+        echo ""
         return 1
     fi
 
@@ -1830,7 +1847,17 @@ for f in `test -d device && find -L device -maxdepth 4 -name 'vendorsetup.sh' 2>
          `test -d vendor && find -L vendor -maxdepth 4 -name 'vendorsetup.sh' 2> /dev/null | sort` \
          `test -d product && find -L product -maxdepth 4 -name 'vendorsetup.sh' 2> /dev/null | sort`
 do
-    echo "including $f"
+    tput setaf 2;
+    tput bold;
+    echo ""
+    echo "Generating a list of devices from vendorsetup.sh..."
+    tput sgr0;
+    tput setaf 1;
+    tput bold;
+    echo ""
+    echo "Type in 'lunch' to enter the device menu"
+    echo ""
+    tput sgr0;
     . $f
 done
 unset f
