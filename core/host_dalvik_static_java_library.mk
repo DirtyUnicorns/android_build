@@ -52,7 +52,7 @@ $(full_classes_jack): $(java_sources) $(java_resource_sources) $(full_jack_deps)
         $(jar_manifest_file) $(layers_file) $(LOCAL_MODULE_MAKEFILE_DEP) \
         $(LOCAL_ADDITIONAL_DEPENDENCIES) $(LOCAL_JARJAR_RULES) \
         $(JACK) | setup-jack-server
-	@echo Building with Jack: $@
+	@echo -e ${CL_GRN}"Building with Jack:"${CL_RST}" $@"
 	$(java-to-jack)
 
 USE_CORE_LIB_BOOTCLASSPATH :=

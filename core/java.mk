@@ -704,7 +704,7 @@ $(jack_check_timestamp): $(jack_all_deps) | setup-jack-server
 
 ifeq ($(LOCAL_IS_STATIC_JAVA_LIBRARY),true)
 $(full_classes_jack): $(jack_all_deps) | setup-jack-server
-	@echo Building with Jack: $@
+	@echo -e ${CL_GRN}"Building with Jack:"${CL_RST}" $@"
 	$(java-to-jack)
 
 # Update timestamps of .toc files for static java libraries so
@@ -727,7 +727,7 @@ $(built_dex_intermediate): PRIVATE_JACK_COVERAGE_OPTIONS :=
 endif
 
 $(built_dex_intermediate): $(jack_all_deps) | setup-jack-server
-	@echo Building with Jack: $@
+	@echo -e ${CL_GRN}"Building with Jack:"${CL_RST}" $@"
 	$(jack-java-to-dex)
 
 # $(full_classes_jack) is just by-product of $(built_dex_intermediate).
@@ -743,7 +743,7 @@ endif #LOCAL_IS_STATIC_JAVA_LIBRARY
 $(noshrob_classes_jack): PRIVATE_JACK_INTERMEDIATES_DIR := $(intermediates.COMMON)/jack-noshrob-rsc
 $(noshrob_classes_jack): PRIVATE_JACK_PROGUARD_FLAGS :=
 $(noshrob_classes_jack): $(jack_all_deps) | setup-jack-server
-	@echo Building with Jack: $@
+	@echo -e ${CL_GRN}"Building with Jack:"${CL_RST}" $@"
 	$(java-to-jack)
 endif  # full_classes_jar is defined
 endif # LOCAL_JACK_ENABLED

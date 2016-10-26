@@ -2228,7 +2228,7 @@ endif
 # $(1): A .jar file
 define _transform-jar-to-toc
 $1.toc: $1 | $(IJAR)
-	@echo Generating TOC: $$@
+	@echo -e ${CL_YLW}"Generating TOC:"${CL_RST}" $$@"
 	$(hide) $(IJAR) $$< $$@.tmp
 	$$(call commit-change-for-toc,$$@)
 endef
@@ -2248,7 +2248,7 @@ ifeq (,$(TARGET_BUILD_APPS))
 define _transform-dex-to-toc
 $1/classes.dex.toc: PRIVATE_INPUT_DEX_FILES := $1/classes*.dex
 $1/classes.dex.toc: $1/classes.dex $(DEXDUMP)
-	@echo Generating TOC: $$@
+	@echo -e ${CL_YLW}"Generating TOC:"${CL_RST}" $$@"
 	$(hide) $(DEXDUMP) -l xml $$(PRIVATE_INPUT_DEX_FILES) > $$@.tmp
 	$$(call commit-change-for-toc,$$@)
 endef

@@ -135,7 +135,7 @@ $(built_dex): $(jack_all_deps) | setup-jack-server
 	$(jack-java-to-dex)
 
 $(jack_check_timestamp): $(jack_all_deps) | setup-jack-server
-	@echo Checking build with Jack: $@
+	@echo -e ${CL_GRN}"Building with Jack:"${CL_RST}" $@"
 	$(jack-check-java)
 
 # $(full_classes_jack) is just by-product of $(built_dex).

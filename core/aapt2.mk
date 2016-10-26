@@ -34,7 +34,7 @@ ifneq ($(my_generated_res_dirs),)
 my_generated_resources_flata := $(my_compiled_res_base_dir)/gen_res.flata
 $(my_generated_resources_flata): PRIVATE_SOURCE_RES_DIRS := $(my_generated_res_dirs)
 $(my_generated_resources_flata) : $(my_generated_res_dirs_deps)
-	@echo "AAPT2 compile $@ <- $(PRIVATE_SOURCE_RES_DIRS)"
+	@echo -e ${CL_YLW}"AAPT2 compile"${CL_RST}" $$@ <- $(PRIVATE_SOURCE_RES_DIRS)"
 	$(call aapt2-compile-resource-dirs)
 
 my_generated_resources_flata += $(my_generated_resources_flata)
@@ -65,7 +65,7 @@ $(my_res_package) : $(my_res_resources_flat) $(my_overlay_resources_flat) \
 
 ifdef R_file_stamp
 $(R_file_stamp) : $(my_res_package) | $(ACP)
-	@echo "target R.java/Manifest.java: $(PRIVATE_MODULE) ($@)"
+	@echo -e ${CL_YLW}"target R.java/Manifest.java:"${CL_RST}" $(PRIVATE_MODULE) ($@)"
 	@rm -rf $@ && mkdir -p $(dir $@)
 	$(call find-generated-R.java)
 endif

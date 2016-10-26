@@ -533,7 +533,7 @@ $(LOCAL_BUILT_MODULE) : $(my_res_package) $(AAPT2) | $(ACP)
 else
 $(LOCAL_BUILT_MODULE) : $(all_res_assets) $(full_android_manifest) $(AAPT)
 endif
-	@echo "target Package: $(PRIVATE_MODULE) ($@)"
+	@echo -e ${CL_YLW}"target Package:"${CL_RST}" $(PRIVATE_MODULE) ($@)"
 ifdef LOCAL_USE_AAPT2
 ifdef LOCAL_JACK_ENABLED
 	$(call copy-file-to-new-target)
