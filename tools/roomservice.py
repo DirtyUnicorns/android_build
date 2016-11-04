@@ -243,7 +243,7 @@ else:
 
             repo_path = "device/%s/%s" % (manufacturer, device)
 
-            add_to_manifest([{'repository':repo_name,'target_path':repo_path,'branch':'n'}])
+            add_to_manifest([{'repository':repo_name,'target_path':repo_path,'branch':'n-caf'}])
 
             print "Syncing repository to retrieve project."
             os.system('repo sync %s' % repo_path)
