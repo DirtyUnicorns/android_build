@@ -147,7 +147,7 @@ def add_to_manifest_dependencies(repositories):
 
         print 'Adding dependency: %s -> %s' % (repo_name, repo_target)
         project = ElementTree.Element("project", attrib = { "path": repo_target,
-            "remote": "github", "name": repo_name, "revision": "n" })
+            "remote": "github", "name": repo_name, "revision": "n-caf" })
 
         if 'branch' in repository:
             project.set('revision',repository['branch'])
@@ -183,7 +183,7 @@ def add_to_manifest(repositories):
 
         print 'Adding dependency: DirtyUnicorns/%s -> %s' % (repo_name, repo_target)
         project = ElementTree.Element("project", attrib = { "path": repo_target,
-            "remote": "github", "name": "DirtyUnicorns/%s" % repo_name, "revision": "n" })
+            "remote": "github", "name": "DirtyUnicorns/%s" % repo_name, "revision": "n-caf" })
 
         if 'branch' in repository:
             project.set('revision', repository['branch'])
