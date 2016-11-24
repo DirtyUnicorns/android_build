@@ -2518,11 +2518,9 @@ endef
 
 # Remove dynamic timestamps from packages
 #
-ifndef TARGET_BUILD_APPS
 define remove-timestamps-from-package
 $(hide) $(ZIPTIME) $@
 endef
-endif
 
 # Uncompress shared libraries embedded in an apk.
 #
