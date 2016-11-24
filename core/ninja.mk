@@ -1,4 +1,4 @@
-NINJA ?= prebuilts/ninja/$(HOST_PREBUILT_TAG)/ninja
+NINJA ?= prebuilts/build-tools/$(HOST_PREBUILT_TAG)/bin/ninja
 
 ifeq ($(USE_SOONG),true)
 USE_SOONG_FOR_KATI := true
