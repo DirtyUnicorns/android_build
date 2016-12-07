@@ -316,7 +316,6 @@ def BuildImage(in_dir, prop_dict, out_file, target_out=None):
   Returns:
     True iff the image is built successfully.
   """
-  print("BuildImage: in_dir = %s, out_file = %s" % (in_dir, out_file))
   # system_root_image=true: build a system.img that combines the contents of
   # /system and the ramdisk, and can be mounted at the root of the file system.
   origin_in = in_dir
@@ -359,7 +358,6 @@ def BuildImage(in_dir, prop_dict, out_file, target_out=None):
     adjusted_size = AdjustPartitionSizeForVerity(partition_size,
                                                  verity_fec_supported)
     if not adjusted_size:
-      print("Error: adjusting partition size for verity failed, partition_size = %d" % partition_size)
       return False
     prop_dict["partition_size"] = str(adjusted_size)
     prop_dict["original_partition_size"] = str(partition_size)
@@ -389,7 +387,6 @@ def BuildImage(in_dir, prop_dict, out_file, target_out=None):
     if "base_fs_file" in prop_dict:
       base_fs_file = ConvertBlockMapToBaseFs(prop_dict["base_fs_file"])
       if base_fs_file is None:
-        print("Error: no base fs file found")
         return False
       build_command.extend(["-d", base_fs_file])
     build_command.extend(["-L", prop_dict["mount_point"]])
@@ -413,6 +410,8 @@ def BuildImage(in_dir, prop_dict, out_file, target_out=None):
       build_command.extend(["-z", prop_dict["squashfs_compressor"]])
     if "squashfs_compressor_opt" in prop_dict:
       build_command.extend(["-zo", prop_dict["squashfs_compressor_opt"]])
+    if "squashfs_block_size" in prop_dict:
+      build_command.extend(["-b", prop_dict["squashfs_block_size"]])
     if "squashfs_disable_4k_align" in prop_dict and prop_dict.get("squashfs_disable_4k_align") == "true":
       build_command.extend(["-a"])
   elif fs_type.startswith("f2fs"):
@@ -443,12 +442,9 @@ def BuildImage(in_dir, prop_dict, out_file, target_out=None):
 
   try:
     if reserved_blocks and fs_type.startswith("ext4"):
-      print("fs type is ext4")
       (ext4fs_output, exit_code) = RunCommand(build_command)
     else:
-      print("fs type is not ext4")
       (_, exit_code) = RunCommand(build_command)
-    print("Running %s command, exit code = %d" % (build_command, exit_code))
   finally:
     if in_dir != origin_in:
       # Clean up temporary directories and files.
@@ -458,7 +454,6 @@ def BuildImage(in_dir, prop_dict, out_file, target_out=None):
     if base_fs_file is not None:
       os.remove(base_fs_file)
   if exit_code != 0:
-    print("Error: %s command unsuccessful" % build_command)
     return False
 
   # Bug: 21522719, 22023465
@@ -499,19 +494,17 @@ def BuildImage(in_dir, prop_dict, out_file, target_out=None):
   # create the verified image if this is to be verified
   if verity_supported and is_verity_partition:
     if not MakeVerityEnabledImage(out_file, verity_fec_supported, prop_dict):
-      print("Error: making verity enabled image failed")
       return False
 
   if run_fsck and prop_dict.get("skip_fsck") != "true":
     success, unsparse_image = UnsparseImage(out_file, replace=False)
     if not success:
-      print("Error: unparsing of image failed")
       return False
 
     # Run e2fsck on the inflated image file
     e2fsck_command = ["e2fsck", "-f", "-n", unsparse_image]
     (_, exit_code) = RunCommand(e2fsck_command)
-    print("Running %s command, exit code = %d" % (e2fsck_command, exit_code))
+
     os.remove(unsparse_image)
 
   return exit_code == 0
@@ -564,7 +557,21 @@ def ImagePropFromGlobalDict(glob_dict, mount_point):
     copy_prop("has_ext4_reserved_blocks", "has_ext4_reserved_blocks")
     copy_prop("system_squashfs_compressor", "squashfs_compressor")
     copy_prop("system_squashfs_compressor_opt", "squashfs_compressor_opt")
+    copy_prop("system_squashfs_block_size", "squashfs_block_size")
     copy_prop("system_squashfs_disable_4k_align", "squashfs_disable_4k_align")
+    copy_prop("system_base_fs_file", "base_fs_file")
+  elif mount_point == "system_other":
+    # We inherit the selinux policies of /system since we contain some of its files.
+    d["mount_point"] = "system"
+    copy_prop("fs_type", "fs_type")
+    copy_prop("system_fs_type", "fs_type")
+    copy_prop("system_size", "partition_size")
+    copy_prop("system_journal_size", "journal_size")
+    copy_prop("system_verity_block_device", "verity_block_device")
+    copy_prop("has_ext4_reserved_blocks", "has_ext4_reserved_blocks")
+    copy_prop("system_squashfs_compressor", "squashfs_compressor")
+    copy_prop("system_squashfs_compressor_opt", "squashfs_compressor_opt")
+    copy_prop("system_squashfs_block_size", "squashfs_block_size")
     copy_prop("system_base_fs_file", "base_fs_file")
   elif mount_point == "data":
     # Copy the generic fs type first, override with specific one if available.
@@ -587,6 +594,7 @@ def ImagePropFromGlobalDict(glob_dict, mount_point):
     copy_prop("has_ext4_reserved_blocks", "has_ext4_reserved_blocks")
     copy_prop("vendor_squashfs_compressor", "squashfs_compressor")
     copy_prop("vendor_squashfs_compressor_opt", "squashfs_compressor_opt")
+    copy_prop("vendor_squashfs_block_size", "squashfs_block_size")
     copy_prop("vendor_squashfs_disable_4k_align", "squashfs_disable_4k_align")
     copy_prop("vendor_base_fs_file", "base_fs_file")
   elif mount_point == "oem":
@@ -632,6 +640,8 @@ def main(argv):
     mount_point = ""
     if image_filename == "system.img":
       mount_point = "system"
+    elif image_filename == "system_other.img":
+      mount_point = "system_other"
     elif image_filename == "userdata.img":
       mount_point = "data"
     elif image_filename == "cache.img":

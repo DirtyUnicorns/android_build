@@ -147,7 +147,7 @@ def add_to_manifest_dependencies(repositories):
 
         print 'Adding dependency: %s -> %s' % (repo_name, repo_target)
         project = ElementTree.Element("project", attrib = { "path": repo_target,
-            "remote": "github", "name": repo_name, "revision": "n-caf" })
+            "remote": "github", "name": repo_name, "revision": "n7x-caf" })
 
         if 'branch' in repository:
             project.set('revision',repository['branch'])
@@ -183,7 +183,7 @@ def add_to_manifest(repositories):
 
         print 'Adding dependency: DirtyUnicorns/%s -> %s' % (repo_name, repo_target)
         project = ElementTree.Element("project", attrib = { "path": repo_target,
-            "remote": "github", "name": "DirtyUnicorns/%s" % repo_name, "revision": "n-caf" })
+            "remote": "github", "name": "DirtyUnicorns/%s" % repo_name, "revision": "n7x-caf" })
 
         if 'branch' in repository:
             project.set('revision', repository['branch'])
@@ -243,7 +243,7 @@ else:
 
             repo_path = "device/%s/%s" % (manufacturer, device)
 
-            add_to_manifest([{'repository':repo_name,'target_path':repo_path,'branch':'n-caf'}])
+            add_to_manifest([{'repository':repo_name,'target_path':repo_path,'branch':'n7x-caf'}])
 
             print "Syncing repository to retrieve project."
             os.system('repo sync %s' % repo_path)

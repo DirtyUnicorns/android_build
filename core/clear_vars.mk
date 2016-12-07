@@ -156,9 +156,6 @@ LOCAL_COMPATIBILITY_SUPPORT_FILES:=
 LOCAL_CTS_TEST_PACKAGE:=
 LOCAL_CTS_TEST_RUNNER:=
 LOCAL_CLANG:=
-LOCAL_SDCLANG:=
-LOCAL_SDCLANG_LTO:=
-LOCAL_SDCLANG_EXTRA_FLAGS_32:=
 LOCAL_JAR_EXCLUDE_FILES:=
 LOCAL_JAR_PACKAGES:=
 LOCAL_JAR_EXCLUDE_PACKAGES:=
@@ -207,6 +204,8 @@ LOCAL_SHARED_ANDROID_LIBRARIES:=
 # Used to replace the installed file of a presigned prebuilt apk in PDK fusion build,
 # to avoid installing the presigned apks with classes.dex unstripped.
 LOCAL_REPLACE_PREBUILT_APK_INSTALLED:=
+LOCAL_EXTRACT_APK:=
+LOCAL_EXTRACT_DPI_APK:=
 
 # arch specific variables
 LOCAL_SRC_FILES_$(TARGET_ARCH):=
@@ -364,8 +363,6 @@ LOCAL_CLANG_64:=
 LOCAL_INIT_RC_32:=
 LOCAL_INIT_RC_64:=
 LOCAL_JAVA_LANGUAGE_VERSION:=
-
-LOCAL_PROTOC_OUTPUT:=
 
 # Include any vendor specific clear_vars.mk file
 -include $(TOPDIR)vendor/*/build/core/clear_vars.mk

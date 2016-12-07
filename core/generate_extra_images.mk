@@ -77,6 +77,7 @@ $(INSTALLED_PERSISTIMAGE_TARGET): $(MKEXTUSERIMG) $(MAKE_EXT4FS) $(INTERNAL_PERS
 ALL_DEFAULT_INSTALLED_MODULES += $(INSTALLED_PERSISTIMAGE_TARGET)
 ALL_MODULES.$(LOCAL_MODULE).INSTALLED += $(INSTALLED_PERSISTIMAGE_TARGET)
 
+
 #----------------------------------------------------------------------
 # Generate extra userdata images (for variants with multiple mmc sizes)
 #----------------------------------------------------------------------
