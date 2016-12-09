@@ -1,8 +1,13 @@
+NINJA := $(shell command -v ninja)
+ifeq ($(NINJA),)
 ifeq ($(filter address,$(SANITIZE_HOST)),)
-NINJA ?= prebuilts/build-tools/$(HOST_PREBUILT_TAG)/bin/ninja
+NINJA := prebuilts/build-tools/$(HOST_PREBUILT_TAG)/bin/ninja
 else
-NINJA ?= prebuilts/build-tools/$(HOST_PREBUILT_TAG)/asan/bin/ninja
+NINJA := prebuilts/build-tools/$(HOST_PREBUILT_TAG)/asan/bin/ninja
 endif
+endif
+
+$(info Using '$(NINJA)' binary on '$(HOST_PREBUILT_TAG)')
 
 ifeq ($(USE_SOONG),true)
 USE_SOONG_FOR_KATI := true
