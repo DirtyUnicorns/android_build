@@ -73,7 +73,7 @@ $(relocation_packer_output): $(relocation_packer_input) | $(ACP)
 	$(pack-elf-relocations)
 else
 $(relocation_packer_output): $(relocation_packer_input) | $(ACP)
-	@echo "target Unpacked: $(PRIVATE_MODULE) ($@)"
+	@echo -e ${CL_GRN}"target Unpacked:"${CL_RST}" $(PRIVATE_MODULE) ($@)"
 	$(copy-file-to-target)
 endif
 
