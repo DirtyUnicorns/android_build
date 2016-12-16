@@ -46,6 +46,8 @@ ifneq ($(filter-out false,$(USE_CCACHE)),)
     ccache := prebuilts/misc/$(CCACHE_HOST_TAG)/ccache/ccache
   endif
 
+$(info Using '$(ccache)' binary on '$(HOST_PREBUILT_TAG)')
+
   # Check that the executable is here.
   ccache := $(strip $(wildcard $(ccache)))
   ifdef ccache
