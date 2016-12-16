@@ -314,7 +314,7 @@ $(built_apk_splits) : $(built_module_path)/%.apk : $(my_src_dir)/%.apk | $(ACP) 
 
 # Rules to install the split apks.
 $(installed_apk_splits) : $(my_module_path)/%.apk : $(built_module_path)/%.apk | $(ACP)
-	@echo "Install: $@"
+	@echo -e ${CL_CYN}"Install:"${CL_RST}" $@"
 	$(copy-file-to-new-target)
 
 # Register the additional built and installed files.
@@ -346,7 +346,7 @@ else # ! boot jar
 $(built_odex): PRIVATE_MODULE := $(LOCAL_MODULE)
 # Use pattern rule - we may have multiple built odex files.
 $(built_odex) : $(dir $(LOCAL_BUILT_MODULE))% : $(my_prebuilt_src_file)
-	@echo "Dexpreopt Jar: $(PRIVATE_MODULE) ($@)"
+	@echo -e ${CL_GRN}"Dexpreopt Jar:"${CL_RST}" $(PRIVATE_MODULE) ($@)"
 	$(call dexpreopt-one-file,$<,$@)
 
 $(built_module) : $(my_prebuilt_src_file) | $(ACP)

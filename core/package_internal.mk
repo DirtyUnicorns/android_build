@@ -366,7 +366,7 @@ $(R_file_stamp): PRIVATE_RESOURCE_PUBLICS_OUTPUT := \
 			$(intermediates.COMMON)/public_resources.xml
 $(R_file_stamp): PRIVATE_PROGUARD_OPTIONS_FILE := $(proguard_options_file)
 $(R_file_stamp): $(all_res_assets) $(full_android_manifest) $(RenderScript_file_stamp) $(AAPT) | $(ACP)
-	@echo "target R.java/Manifest.java: $(PRIVATE_MODULE) ($@)"
+	@echo -e ${CL_YLW}"target R.java/Manifest.java:"${CL_RST}" $(PRIVATE_MODULE) ($@)"
 	@rm -rf $@ && mkdir -p $(dir $@)
 	$(create-resource-java-files)
 	$(call find-generated-R.java)
@@ -386,7 +386,7 @@ $(R_file_stamp): $(resource_export_package)
 $(resource_export_package): PRIVATE_PRODUCT_AAPT_CONFIG :=
 $(resource_export_package): PRIVATE_PRODUCT_AAPT_PREF_CONFIG :=
 $(resource_export_package): $(all_res_assets) $(full_android_manifest) $(RenderScript_file_stamp) $(AAPT)
-	@echo "target Export Resources: $(PRIVATE_MODULE) ($@)"
+	@echo -e ${CL_YLW}"target Export Resources:"${CL_RST}" $(PRIVATE_MODULE) ($@)"
 	$(create-empty-package)
 	$(add-assets-to-package)
 endif
@@ -624,7 +624,7 @@ $(built_apk_splits) : $(built_module_path)/%.apk : $(LOCAL_BUILT_MODULE)
 
 # Rules to install the splits
 $(installed_apk_splits) : $(my_module_path)/$(LOCAL_MODULE)_%.apk : $(built_module_path)/package_%.apk | $(ACP)
-	@echo "Install: $@"
+	@echo -e ${CL_GRN}"Install:"${CL_RST}" $@"
 	$(copy-file-to-new-target)
 
 # Register the additional built and installed files.
