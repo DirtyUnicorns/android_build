@@ -2573,7 +2573,7 @@ endef
 # $(2): destination file
 define copy-one-file
 $(2): $(1) | $(ACP)
-	@echo -e ${CL_YLW}"Copy:"${CL_RST}" $$@"
+	@echo -e ${CL_GRN}"Copy:"${CL_RST}" $$@"
 	$$(copy-file-to-target)
 endef
 
@@ -2594,7 +2594,7 @@ endef
 # $(2): destination file, must end with .xml.
 define copy-xml-file-checked
 $(2): $(1) | $(ACP)
-	@echo -e ${CL_YLW}"Copy xml:"${CL_RST}" $$@"
+	@echo -e ${CL_GRN}"Copy xml:"${CL_RST}" $$@"
 	$(hide) xmllint $$< >/dev/null  # Don't print the xml file to stdout.
 	$$(copy-file-to-target)
 endef
