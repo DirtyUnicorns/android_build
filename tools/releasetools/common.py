@@ -444,7 +444,7 @@ def _BuildBootableImage(sourcedir, fs_config_file, info_dict=None,
   if os.access(fn, os.F_OK):
     cmd.append("--base")
     cmd.append(open(fn).read().rstrip("\n"))
-    
+
   fn = os.path.join(sourcedir, "ramdiskaddr")
   if os.access(fn, os.F_OK):
     cmd.append("--ramdiskaddr")
@@ -1904,6 +1904,7 @@ def MakeRecoveryPatch(input_dir, output_sink, recovery_img, boot_img,
     info_dict = OPTIONS.info_dict
 
   full_recovery_image = info_dict.get("full_recovery_image") == "true"
+  use_bsdiff = info_dict.get("no_gzip_recovery_ramdisk") == "true"
 
   if full_recovery_image:
     output_sink("etc/recovery.img", recovery_img.data)
@@ -1919,8 +1920,11 @@ def MakeRecoveryPatch(input_dir, output_sink, recovery_img, boot_img,
       bonus_args = ""
       assert not os.path.exists(path)
     else:
-      diff_program = ["imgdiff"]
-      if os.path.exists(path):
+      if use_bsdiff:
+        diff_program = ["bsdiff"]
+      else:
+        diff_program = ["imgdiff"]
+      if os.path.exists(path) and not use_bsdiff:
         diff_program.append("-b")
         diff_program.append(path)
         bonus_args = "-b /system/etc/recovery-resource.dat"
