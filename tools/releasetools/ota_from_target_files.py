@@ -587,17 +587,17 @@ def WriteFullOTAPackage(input_zip, output_zip):
         open(OPTIONS.oem_source).readlines())
 
   if OPTIONS.override_prop:
-    metadata = {"post-timestamp": GetBuildProp("ro.build.date.utc",
-                                               OPTIONS.info_dict),
-                }
+    metadata = {
+	"post-timestamp": GetBuildProp("ro.build.date.utc", OPTIONS.info_dict),
+    }
   else:
-    metadata = {"post-build": GetBuildProp("ro.build.fingerprint",
+    metadata = {
+        "post-build": CalculateFingerprint(oem_props, oem_dict,
                                            OPTIONS.info_dict),
-                "pre-device": GetBuildProp("ro.product.device",
-                                           OPTIONS.info_dict),
-                "post-timestamp": GetBuildProp("ro.build.date.utc",
-                                               OPTIONS.info_dict),
-                }
+        "pre-device": GetOemProperty("ro.product.device", oem_props, oem_dict,
+                                     OPTIONS.info_dict),
+        "post-timestamp": GetBuildProp("ro.build.date.utc", OPTIONS.info_dict),
+    }
 
   device_specific = common.DeviceSpecificParams(
       input_zip=input_zip,
@@ -1580,11 +1580,16 @@ def WriteIncrementalOTAPackage(target_zip, source_zip, output_zip):
     oem_dict = common.LoadDictionaryFromLines(
         open(OPTIONS.oem_source).readlines())
 
-  metadata = {
-      "pre-device": GetOemProperty("ro.product.device", oem_props, oem_dict,
-                                   OPTIONS.source_info_dict),
-      "ota-type": "FILE",
-  }
+  if OPTIONS.override_prop:
+    metadata = {
+        "ota-type": "BLOCK",
+    }
+  else:
+    metadata = {
+        "pre-device": GetOemProperty("ro.product.device", oem_props, oem_dict,
+                                       OPTIONS.source_info_dict),
+        "ota-type": "BLOCK",
+    }
 
   post_timestamp = GetBuildProp("ro.build.date.utc", OPTIONS.target_info_dict)
   pre_timestamp = GetBuildProp("ro.build.date.utc", OPTIONS.source_info_dict)
@@ -1625,17 +1630,18 @@ def WriteIncrementalOTAPackage(target_zip, source_zip, output_zip):
   else:
     vendor_diff = None
 
-  target_fp = CalculateFingerprint(oem_props, oem_dict,
-                                   OPTIONS.target_info_dict)
-  source_fp = CalculateFingerprint(oem_props, oem_dict,
-                                   OPTIONS.source_info_dict)
+  if not OPTIONS.override_prop:
+    target_fp = CalculateFingerprint(oem_props, oem_dict,
+                                     OPTIONS.target_info_dict)
+    source_fp = CalculateFingerprint(oem_props, oem_dict,
+                                     OPTIONS.source_info_dict)
 
   if oem_props is None:
-    script.AssertSomeFingerprint(source_fp, target_fp)
+     script.AssertSomeFingerprint(source_fp, target_fp)
   else:
-    script.AssertSomeThumbprint(
-        GetBuildProp("ro.build.thumbprint", OPTIONS.target_info_dict),
-        GetBuildProp("ro.build.thumbprint", OPTIONS.source_info_dict))
+     script.AssertSomeThumbprint(
+         GetBuildProp("ro.build.thumbprint", OPTIONS.target_info_dict),
+         GetBuildProp("ro.build.thumbprint", OPTIONS.source_info_dict))
 
   metadata["pre-build"] = source_fp
   metadata["post-build"] = target_fp
