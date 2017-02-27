@@ -313,12 +313,12 @@ ifneq (true,$(LOCAL_UNINSTALLABLE_MODULE))
 $(LOCAL_INSTALLED_MODULE): PRIVATE_POST_INSTALL_CMD := $(LOCAL_POST_INSTALL_CMD)
 ifneq ($(LOCAL_ACP_UNAVAILABLE),true)
 $(LOCAL_INSTALLED_MODULE): $(LOCAL_BUILT_MODULE) | $(ACP)
-	@echo -e ${CL_CYN}"Install: $@"${CL_RST}
+	@echo -e ${CL_CYN}"Install:"${CL_RST}" $@"
 	$(copy-file-to-new-target)
 	$(PRIVATE_POST_INSTALL_CMD)
 else
 $(LOCAL_INSTALLED_MODULE): $(LOCAL_BUILT_MODULE)
-	@echo -e ${CL_CYN}"Install: $@"${CL_RST}
+	@echo -e ${CL_CYN}"Install:"${CL_RST}" $@"
 	$(copy-file-to-target-with-cp)
 endif
 
@@ -335,7 +335,7 @@ ifdef my_init_rc
 my_init_rc_src := $(LOCAL_PATH)/$(my_init_rc)
 my_init_rc_installed := $(TARGET_OUT$(partition_tag)_ETC)/init/$(notdir $(my_init_rc_src))
 $(my_init_rc_installed) : $(my_init_rc_src) | $(ACP)
-	@echo "Install: $@"
+	@echo -e ${CL_CYN}"Install:"${CL_RST}" $@"
 	$(copy-file-to-new-target)
 
 $(my_register_name) : $(my_init_rc_installed)
