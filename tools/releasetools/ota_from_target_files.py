@@ -704,28 +704,27 @@ else if get_stage("%(bcb_dev)s") == "3/3" then
   script.Print("Target: %s" % CalculateFingerprint(
       oem_props, oem_dict, OPTIONS.info_dict))
 
-  script.Print("")
-  script.Print("       || THANK YOU FOR FLASHING ||        ")
-  script.Print("")
-  script.Print("DDDDDDDDDDDDD        UUUUUUUU     UUUUUUUU");
-  script.Print("D::::::::::::DDD     U::::::U     U::::::U");
-  script.Print("D:::::::::::::::DD   U::::::U     U::::::U");
-  script.Print("DDD:::::DDDDD:::::D  UU:::::U     U:::::UU");
-  script.Print("  D:::::D    D:::::D  U:::::U     U:::::U ");
-  script.Print("  D:::::D     D:::::D U:::::U     U:::::U ");
-  script.Print("  D:::::D     D:::::D U:::::U     U:::::U ");
-  script.Print("  D:::::D     D:::::D U:::::U     U:::::U ");
-  script.Print("  D:::::D     D:::::D U:::::U     U:::::U ");
-  script.Print("  D:::::D     D:::::D U:::::U     U:::::U ");
-  script.Print("  D:::::D     D:::::D U:::::U     U:::::U ");
-  script.Print("  D:::::D    D:::::D  U::::::U   U::::::U ");
-  script.Print("DDD:::::DDDDD:::::D   U:::::::UUU:::::::U ");
-  script.Print("D:::::::::::::::DD     UU:::::::::::::UU  ");
-  script.Print("D::::::::::::DDD         UU:::::::::UU    ");
-  script.Print("DDDDDDDDDDDDD              UUUUUUUUU      ");
-  script.Print("")
-  script.Print("          ||| ANDROID 7.1.2 |||           ")
-  script.Print("")
+  script.Print(" ")
+  script.Print("         || THANK YOU FOR FLASHING ||        ");
+  script.Print(" ")
+  script.Print(" DDDDDDDDDDDDD         UUUUUUUU     UUUUUUUU ");
+  script.Print(" D::::::::::::DDD      U::::::U     U::::::U ");
+  script.Print(" D:::::::::::::::DD    U::::::U     U::::::U ");
+  script.Print(" DDD:::::DDDDD:::::D   UU:::::U     U:::::UU ");
+  script.Print("   D:::::D    D:::::D   U:::::U     U:::::U  ");
+  script.Print("   D:::::D     D:::::D  U:::::U     U:::::U  ");
+  script.Print("   D:::::D     D:::::D  U:::::U     U:::::U  ");
+  script.Print("   D:::::D     D:::::D  U:::::U     U:::::U  ");
+  script.Print("   D:::::D     D:::::D  U:::::U     U:::::U  ");
+  script.Print("   D:::::D     D:::::D  U:::::U     U:::::U  ");
+  script.Print("   D:::::D     D:::::D  U:::::U     U:::::U  ");
+  script.Print("   D:::::D    D:::::D   U::::::U   U::::::U  ");
+  script.Print(" DDD:::::DDDDD:::::D    U:::::::UUU:::::::U  ");
+  script.Print(" D:::::::::::::::DD      UU:::::::::::::UU   ");
+  script.Print(" D::::::::::::DDD          UU:::::::::UU     ");
+  script.Print(" DDDDDDDDDDDDD               UUUUUUUUU       ");
+  script.Print(" ")
+  script.Print("            ||| ANDROID 7.1.2 |||            ");
 
   script.AppendExtra("ifelse(is_mounted(\"/system\"), unmount(\"/system\"));")
   device_specific.FullOTA_InstallBegin()
