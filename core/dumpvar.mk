@@ -1,21 +1,23 @@
 
 # List of variables we want to print in the build banner.
 print_build_config_vars := \
-  PLATFORM_VERSION_CODENAME \
-  PLATFORM_VERSION \
-  TARGET_PRODUCT \
+  DU_VERSION \
   TARGET_BUILD_VARIANT \
   TARGET_ARCH \
   TARGET_ARCH_VARIANT \
   TARGET_CPU_VARIANT \
-  HOST_ARCH \
-  HOST_2ND_ARCH \
-  HOST_OS \
-  HOST_OS_EXTRA \
-  HOST_CROSS_OS \
-  HOST_CROSS_ARCH \
-  HOST_CROSS_2ND_ARCH \
-  HOST_BUILD_TYPE \
+
+ifneq ($(TARGET_2ND_ARCH_VARIANT),)
+print_build_config_vars += \
+  TARGET_2ND_ARCH_VARIANT
+endif
+
+ifneq ($(TARGET_2ND_CPU_VARIANT),)
+print_build_config_vars += \
+  TARGET_2ND_CPU_VARIANT
+endif
+
+print_build_config_vars += \
   BUILD_ID \
   OUT_DIR
 
@@ -112,20 +114,7 @@ endif # CALLED_FROM_SETUP
 
 ifneq ($(PRINT_BUILD_CONFIG),)
 $(info ============================================)
-$(info   DU_VERSION=$(DU_VERSION))
-$(info   TARGET_PRODUCT=$(TARGET_PRODUCT))
-$(info   TARGET_BUILD_VARIANT=$(TARGET_BUILD_VARIANT))
-$(info   TARGET_BUILD_TYPE=$(TARGET_BUILD_TYPE))
-$(info   TARGET_ARCH=$(TARGET_ARCH))
-$(info   TARGET_GCC_VERSION=$(TARGET_GCC_VERSION))
-$(info   TARGET_NDK_GCC_VERSION=$(TARGET_NDK_GCC_VERSION))
-$(info   TARGET_ARCH_VARIANT=$(TARGET_ARCH_VARIANT))
-$(info   TARGET_CPU_VARIANT=$(TARGET_CPU_VARIANT))
-$(info   HOST_ARCH=$(HOST_ARCH))
-$(info   HOST_OS=$(HOST_OS))
-$(info   HOST_OS_EXTRA=$(HOST_OS_EXTRA))
-$(info   HOST_BUILD_TYPE=$(HOST_BUILD_TYPE))
-$(info   BUILD_ID=$(BUILD_ID))
-$(info   OUT_DIR=$(OUT_DIR))
+$(foreach v, $(print_build_config_vars),\
+  $(info $v=$($(v))))
 $(info ============================================)
 endif
