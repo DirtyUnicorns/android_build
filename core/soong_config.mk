@@ -144,6 +144,7 @@ $(call add_json_list, NamespacesToExport,                $(PRODUCT_SOONG_NAMESPA
 $(call add_json_list, PgoAdditionalProfileDirs,          $(PGO_ADDITIONAL_PROFILE_DIRS))
 
 $(call add_json_str,  Libart_img_base,                   $(LIBART_IMG_BASE))
+$(call add_json_bool, BoardUsesQTIHardware,              $(filter true,$(BOARD_USES_QTI_HARDWARE)))
 
 _contents := $(_contents)    "VendorVars": {$(newline)
 $(foreach namespace,$(SOONG_CONFIG_NAMESPACES),\
