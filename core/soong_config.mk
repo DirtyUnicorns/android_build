@@ -145,6 +145,7 @@ $(call add_json_list, PgoAdditionalProfileDirs,          $(PGO_ADDITIONAL_PROFIL
 
 $(call add_json_str,  Libart_img_base,                   $(LIBART_IMG_BASE))
 $(call add_json_bool, BoardUsesQTIHardware,              $(filter true,$(BOARD_USES_QTI_HARDWARE)))
+$(call add_json_bool, Needs_text_relocations,            $(filter true,$(TARGET_NEEDS_PLATFORM_TEXT_RELOCATIONS)))
 
 _contents := $(_contents)    "VendorVars": {$(newline)
 $(foreach namespace,$(SOONG_CONFIG_NAMESPACES),\
