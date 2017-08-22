@@ -631,6 +631,7 @@ function lunch()
         return 1
     fi
 
+    check_product $product
     if [ $? -ne 0 ]
     then
         # if we can't find the product, try to grab it from our github
