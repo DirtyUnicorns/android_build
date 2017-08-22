@@ -174,8 +174,7 @@ all_product_configs := $(call get-product-makefiles,\
     $(SRC_TARGET_DIR)/product/AndroidProducts.mk)
 else
  ifneq ($(DU_BUILD),)
-    $(call import-products, device/du/$(DU_BUILD)/device.mk)
-    all_product_configs := device/du/$(DU_BUILD)/device.mk
+    all_product_configs := device/*/$(DU_BUILD)/du.mk
   else
     # Read in all of the product definitions specified by the AndroidProducts.mk
     # files in the tree.
