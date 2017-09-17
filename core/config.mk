@@ -958,4 +958,4 @@ include $(BUILD_SYSTEM)/ninja_config.mk
 include $(BUILD_SYSTEM)/soong_config.mk
 endif
 
-include $(BUILD_SYSTEM)/dumpvar.mk
+include $(TOPDIR)build/extras/core/dumpvar.mk
