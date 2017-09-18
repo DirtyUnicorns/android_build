@@ -303,7 +303,7 @@ include $(BUILD_SYSTEM)/combo/select.mk
 endif
 
 ifndef KATI
-include $(BUILD_SYSTEM)/ccache.mk
+include $(TOPDIR)build/extras/core/ccache.mk
 include $(BUILD_SYSTEM)/goma.mk
 
 export CC_WRAPPER
