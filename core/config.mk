@@ -958,4 +958,6 @@ include $(BUILD_SYSTEM)/ninja_config.mk
 include $(BUILD_SYSTEM)/soong_config.mk
 endif
 
-include $(TOPDIR)build/extras/core/dumpvar.mk
+include $(TOPDIR)vendor/extras/core/dumpvar.mk
+include $(TOPDIR)vendor/extras/core/pathmap.mk
+include $(TOPDIR)vendor/extras/core/qcom_target.mk
