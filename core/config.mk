@@ -303,7 +303,7 @@ include $(BUILD_SYSTEM)/combo/select.mk
 endif
 
 ifndef KATI
-include $(TOPDIR)build/extras/core/ccache.mk
+include $(TOPDIR)vendor/extras/core/ccache.mk
 include $(BUILD_SYSTEM)/goma.mk
 
 export CC_WRAPPER
@@ -959,5 +959,8 @@ include $(BUILD_SYSTEM)/soong_config.mk
 endif
 
 include $(TOPDIR)vendor/extras/core/dumpvar.mk
+
+ifeq ($(BOARD_USES_QCOM_HARDWARE),true)
 include $(TOPDIR)vendor/extras/core/pathmap.mk
 include $(TOPDIR)vendor/extras/core/qcom_target.mk
+endif

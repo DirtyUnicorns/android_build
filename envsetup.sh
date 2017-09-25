@@ -575,26 +575,22 @@ function breakfast()
     DU_DEVICES_ONLY="true"
     unset LUNCH_MENU_CHOICES
     add_lunch_combo full-eng
-    for f in `/bin/ls vendor/du/vendorsetup.sh 2> /dev/null`
+    if [[ $( grep -i "codeaurora" "${1}"manifest/o8x_default.xml) ]]; then
+    for caf in `/bin/ls vendor/du/caf-vendorsetup.sh 2> /dev/null`
         do
-            echo "including $f"
-            . $f
+            echo "including $caf"
+            . $caf
         done
-    unset f
-
-    if [ $# -eq 0 ]; then
-        # No arguments, so let's have the full menu
-        lunch
+    unset caf
     else
-        echo "z$target" | grep -q "-"
-        if [ $? -eq 0 ]; then
-            # A buildtype was specified, assume a full device name
-            lunch $target
-        else
-            # This is probably just the du model name
-            lunch du_$target-userdebug
-        fi
+    for aosp in `/bin/ls vendor/du/vendorsetup.sh 2> /dev/null`
+        do
+            echo "including $aosp"
+            . $aosp
+        done
+    unset aosp
     fi
+
     return $?
 }
 
@@ -665,14 +661,13 @@ function lunch()
         # if we can't find the product, try to grab it from our github
         T=$(gettop)
         pushd $T > /dev/null
-        build/extras/tools/roomservice.py $product
+    if [[ $( grep -i "codeaurora" "${1}"manifest/o8x_default.xml) ]]; then
+        vendor/extras/tools/roomservice-caf.py $product
+    else
+        vendor/extras/tools/roomservice.py $product
+    fi
         popd > /dev/null
         check_product $product
-    else
-        T=$(gettop)
-        pushd $T > /dev/null
-        build/extras/tools/roomservice.py $product true
-        popd > /dev/null
     fi
     TARGET_PRODUCT=$product \
     TARGET_BUILD_VARIANT=$variant \
@@ -1684,7 +1679,7 @@ function set_java_home() {
 function repopick() {
     set_stuff_for_environment
     T=$(gettop)
-    $T/build/extras/tools/repopick.py $@
+    $T/vendor/extras/tools/repopick.py $@
 }
 
 # Print colored exit condition
@@ -1792,16 +1787,25 @@ if [ "x$SHELL" != "x/bin/bash" ]; then
     esac
 fi
 
-# Execute the contents of any vendorsetup.sh files we can find.
-for f in `test -d device && find -L device -maxdepth 4 -name 'vendorsetup.sh' 2> /dev/null | sort` \
-         `test -d vendor && find -L vendor -maxdepth 4 -name 'vendorsetup.sh' 2> /dev/null | sort` \
-         `test -d product && find -L product -maxdepth 4 -name 'vendorsetup.sh' 2> /dev/null | sort`
-do
-    echo "including $f"
-    . $f
-done
-unset f
+# Execute the contents of any caf-vendorsetup.sh files we can find.
+if [[ $( grep -r "codeaurora" "${1}"manifest/* ) ]]; then
+    for caf in `test -d device && find -L device -maxdepth 4 -name 'caf-vendorsetup.sh' 2> /dev/null | sort` \
+             `test -d vendor && find -L vendor -maxdepth 4 -name 'caf-vendorsetup.sh' 2> /dev/null | sort` \
+             `test -d product && find -L product -maxdepth 4 -name 'caf-vendorsetup.sh' 2> /dev/null | sort`
+    do
+        echo "including $caf"
+        . $caf
+    done
+        unset caf
+        else
+    for aosp in `test -d device && find -L device -maxdepth 4 -name 'vendorsetup.sh' 2> /dev/null | sort` \
+             `test -d vendor && find -L vendor -maxdepth 4 -name 'vendorsetup.sh' 2> /dev/null | sort` \
+             `test -d product && find -L product -maxdepth 4 -name 'vendorsetup.sh' 2> /dev/null | sort`
+    do
+        echo "including $aosp"
+        . $aosp
+    done
+        unset aosp
+fi
 
 addcompletions
-
-export ANDROID_BUILD_TOP=$(gettop)
