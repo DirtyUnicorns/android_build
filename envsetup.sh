@@ -576,19 +576,19 @@ function breakfast()
     unset LUNCH_MENU_CHOICES
     add_lunch_combo full-eng
     if [[ $( grep -i "codeaurora" manifest/o8x_default.xml) ]]; then
-    for caf in `/bin/ls vendor/du/caf-vendorsetup.sh 2> /dev/null`
-        do
-            echo "including $caf"
-            . $caf
-        done
-    unset caf
+        for caf in `/bin/ls vendor/du/caf-vendorsetup.sh 2> /dev/null`
+            do
+                echo "including $caf"
+                . $caf
+            done
+        unset caf
     else
-    for aosp in `/bin/ls vendor/du/vendorsetup.sh 2> /dev/null`
-        do
-            echo "including $aosp"
-            . $aosp
-        done
-    unset aosp
+        for aosp in `/bin/ls vendor/du/vendorsetup.sh 2> /dev/null`
+            do
+                echo "including $aosp"
+                . $aosp
+            done
+        unset aosp
     fi
 
     return $?
@@ -661,11 +661,11 @@ function lunch()
         # if we can't find the product, try to grab it from our github
         T=$(gettop)
         pushd $T > /dev/null
-    if [[ $( grep -i "codeaurora" manifest/o8x_default.xml) ]]; then
-        vendor/extras/tools/roomservice-caf.py $product
-    else
-        vendor/extras/tools/roomservice.py $product
-    fi
+        if [[ $( grep -i "codeaurora" manifest/o8x_default.xml) ]]; then
+            vendor/extras/tools/roomservice-caf.py $product
+        else
+            vendor/extras/tools/roomservice.py $product
+        fi
         popd > /dev/null
         check_product $product
     fi
@@ -1796,8 +1796,8 @@ if [[ $( grep -r "codeaurora" manifest/* ) ]]; then
         echo "including $caf"
         . $caf
     done
-        unset caf
-        else
+    unset caf
+else
     for aosp in `test -d device && find -L device -maxdepth 4 -name 'vendorsetup.sh' 2> /dev/null | sort` \
              `test -d vendor && find -L vendor -maxdepth 4 -name 'vendorsetup.sh' 2> /dev/null | sort` \
              `test -d product && find -L product -maxdepth 4 -name 'vendorsetup.sh' 2> /dev/null | sort`
@@ -1805,7 +1805,7 @@ if [[ $( grep -r "codeaurora" manifest/* ) ]]; then
         echo "including $aosp"
         . $aosp
     done
-        unset aosp
+    unset aosp
 fi
 
 addcompletions
