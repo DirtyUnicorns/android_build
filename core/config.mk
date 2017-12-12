@@ -964,3 +964,6 @@ ifeq ($(BOARD_USES_QCOM_HARDWARE),true)
 include $(TOPDIR)vendor/extras/core/pathmap.mk
 include $(TOPDIR)vendor/extras/core/qcom_target.mk
 endif
+
+# DU common sepolicy
+include $(TOPDIR)vendor/du/sepolicy/sepolicy.mk
