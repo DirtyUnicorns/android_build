@@ -675,10 +675,14 @@ function lunch()
         # if we can't find the product, try to grab it from our github
         T=$(gettop)
         pushd $T > /dev/null
-        if [[ $( grep -i "codeaurora" manifest/o8x_default.xml) ]]; then
-            vendor/extras/tools/roomservice-caf.py $product
+        if [[ $NO_ROOMSERVICE == true ]]; then
+            echo "Roomservice turned off, type in 'export NO_ROOMSERVICE=false' if you want it back on"
         else
-            vendor/extras/tools/roomservice.py $product
+            if [[ $( grep -i "codeaurora" manifest/o8x_default.xml) ]]; then
+                vendor/extras/tools/roomservice-caf.py $product
+            else
+                vendor/extras/tools/roomservice.py $product
+            fi
         fi
         popd > /dev/null
         check_product $product
