@@ -474,9 +474,8 @@ else if get_stage("%(bcb_dev)s") == "3/3" then
 
   # Dump fingerprints
   # script.Print("Target: %s" % target_fp)
-
   script.Print(" ")
-  script.Print("         || THANK YOU FOR FLASHING ||        ");
+  script.Print("        || THANK YOU FOR FLASHING ||        ");
   script.Print(" ")
   script.Print(" DDDDDDDDDDDDD         UUUUUUUU     UUUUUUUU ");
   script.Print(" D::::::::::::DDD      U::::::U     U::::::U ");
@@ -495,7 +494,29 @@ else if get_stage("%(bcb_dev)s") == "3/3" then
   script.Print(" D::::::::::::DDD          UU:::::::::UU     ");
   script.Print(" DDDDDDDDDDDDD               UUUUUUUUU       ");
   script.Print(" ")
-  script.Print("            ||| ANDROID 8.1.0 |||            ");
+
+  if GetBuildProp("ro.mod.version", OPTIONS.info_dict) is not None:
+    buildid = GetBuildProp("ro.mod.version", OPTIONS.info_dict)
+    androidver = GetBuildProp("ro.build.version.release", OPTIONS.info_dict)
+    buildtype = GetBuildProp("ro.build.type", OPTIONS.info_dict)
+    buildidn = GetBuildProp("ro.build.id", OPTIONS.info_dict)
+    buildday = GetBuildProp("ro.build.date", OPTIONS.info_dict)
+    securep = GetBuildProp("ro.build.version.security_patch", OPTIONS.info_dict)
+    device = GetBuildProp("ro.product.name", OPTIONS.info_dict)
+    script.Print(" =============================================");
+    script.Print(" ROM version    : %s"%(buildid));
+    script.Print("");
+    script.Print(" Android version  : %s"%(androidver));
+    script.Print("");
+    script.Print(" Security patch : %s"%(securep));
+    script.Print("");
+    script.Print(" Build date     : %s"%(buildday));
+    script.Print("");
+    script.Print(" Build type     : %s"%(buildtype));
+    script.Print("");
+    script.Print(" =============================================");
+    script.Print(" Device         : %s"%(device));
+    script.Print(" =============================================");
 
   script.AppendExtra("ifelse(is_mounted(\"/system\"), unmount(\"/system\"));")
   device_specific.FullOTA_InstallBegin()
