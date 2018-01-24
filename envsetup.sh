@@ -575,7 +575,7 @@ function breakfast()
     DU_DEVICES_ONLY="true"
     unset LUNCH_MENU_CHOICES
     add_lunch_combo full-eng
-    if [[ $( grep -i "codeaurora" manifest/o8x_default.xml) ]]; then
+    if [[ $( grep -i "caf-merge" manifest/o8x_default.xml) ]]; then
         for caf in `/bin/ls vendor/du/caf-vendorsetup.sh 2> /dev/null`
             do
                 echo "including $caf"
@@ -678,7 +678,7 @@ function lunch()
         if [[ $NO_ROOMSERVICE == true ]]; then
             echo "Roomservice turned off, type in 'export NO_ROOMSERVICE=false' if you want it back on"
         else
-            if [[ $( grep -i "codeaurora" manifest/o8x_default.xml) ]]; then
+            if [[ $( grep -i "caf-merge" manifest/o8x_default.xml) ]]; then
                 vendor/extras/tools/roomservice-caf.py $product
             else
                 vendor/extras/tools/roomservice.py $product
@@ -1806,7 +1806,7 @@ if [ "x$SHELL" != "x/bin/bash" ]; then
 fi
 
 # Execute the contents of any caf-vendorsetup.sh files we can find.
-if [[ $( grep -r "codeaurora" manifest/* ) ]]; then
+if [[ $( grep -r "caf-merge" manifest/* ) ]]; then
     for caf in `test -d device && find -L device -maxdepth 4 -name 'caf-vendorsetup.sh' 2> /dev/null | sort` \
              `test -d vendor && find -L vendor -maxdepth 4 -name 'caf-vendorsetup.sh' 2> /dev/null | sort` \
              `test -d product && find -L product -maxdepth 4 -name 'caf-vendorsetup.sh' 2> /dev/null | sort`
