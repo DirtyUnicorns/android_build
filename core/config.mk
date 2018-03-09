@@ -497,6 +497,14 @@ endif
 prebuilt_sdk_tools := prebuilts/sdk/tools
 prebuilt_sdk_tools_bin := $(prebuilt_sdk_tools)/$(HOST_OS)/bin
 
+# Always use prebuilts for ckati and makeparallel
+prebuilt_build_tools := prebuilts/build-tools
+ifeq ($(filter address,$(SANITIZE_HOST)),)
+prebuilt_build_tools_bin := $(prebuilt_build_tools)/$(HOST_PREBUILT_TAG)/bin
+else
+prebuilt_build_tools_bin := $(prebuilt_build_tools)/$(HOST_PREBUILT_TAG)/asan/bin
+endif
+
 USE_PREBUILT_SDK_TOOLS_IN_PLACE := true
 
 #
@@ -542,14 +550,6 @@ endif # TARGET_BUILD_PDK
 prebuilt_sdk_tools :=
 prebuilt_sdk_tools_bin :=
 
-# Always use prebuilts for ckati and makeparallel
-prebuilt_build_tools := prebuilts/build-tools
-ifeq ($(filter address,$(SANITIZE_HOST)),)
-prebuilt_build_tools_bin := $(prebuilt_build_tools)/$(HOST_PREBUILT_TAG)/bin
-else
-prebuilt_build_tools_bin := $(prebuilt_build_tools)/$(HOST_PREBUILT_TAG)/asan/bin
-endif
-
 ACP := $(prebuilt_build_tools_bin)/acp
 CKATI := $(prebuilt_build_tools_bin)/ckati
 DEPMOD := $(HOST_OUT_EXECUTABLES)/depmod
@@ -558,7 +558,8 @@ IJAR := $(prebuilt_build_tools_bin)/ijar
 MAKEPARALLEL := $(prebuilt_build_tools_bin)/makeparallel
 SOONG_JAVAC_WRAPPER := $(SOONG_HOST_OUT_EXECUTABLES)/soong_javac_wrapper
 SOONG_ZIP := $(SOONG_HOST_OUT_EXECUTABLES)/soong_zip
-ZIP2ZIP := $(SOONG_HOST_OUT_EXECUTABLES)/zip2zip
+XZ := $(prebuilt_build_tools)/$(HOST_PREBUILT_TAG)/bin/xz
+ZIP2ZIP := $(prebuilt_build_tools_bin)/zip2zip
 ZIPTIME := $(prebuilt_build_tools_bin)/ziptime
 
 # ---------------------------------------------------------------
