@@ -212,6 +212,8 @@ $(call add_json_list, MissingUsesLibraries,              $(INTERNAL_PLATFORM_MIS
 
 $(call add_json_bool, BoardUsesQTIHardware,              $(filter true,$(BOARD_USES_QTI_HARDWARE)))
 
+$(call add_json_bool, Uses_qti_camera_device,            $(filter true,$(TARGET_USES_QTI_CAMERA_DEVICE)))
+
 $(call add_json_map, VendorVars)
 $(foreach namespace,$(SOONG_CONFIG_NAMESPACES),\
   $(call add_json_map, $(namespace))\
