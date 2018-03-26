@@ -531,6 +531,10 @@ else if get_stage("%(bcb_dev)s") == "3/3" then
     script.RunBackup("backup")
     script.Unmount("/system")
 
+  script.Mount("/system")
+  script.RunCleanCache()
+  script.Unmount("/system")
+
   system_progress = 0.75
 
   if OPTIONS.wipe_user_data:
