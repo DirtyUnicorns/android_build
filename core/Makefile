@@ -1,5 +1,14 @@
 # Put some miscellaneous rules here
 
+#
+# Build system colors
+#
+# PFX: Prefix "target C++:" in yellow
+# INS: Module "Install:" output color (cyan for ics)
+ifneq ($(BUILD_WITH_COLORS),0)
+    include $(TOP_DIR)build/core/colors.mk
+endif
+
 # HACK: clear LOCAL_PATH from including last build target before calling
 # intermedites-dir-for
 LOCAL_PATH := $(BUILD_SYSTEM)
@@ -2765,6 +2774,32 @@ bacon: otapackage
 	$(hide) ln -f $(INTERNAL_OTA_PACKAGE_TARGET) $(DU_TARGET_PACKAGE)
 	$(hide) $(MD5SUM) $(DU_TARGET_PACKAGE) > $(DU_TARGET_PACKAGE).md5sum
 	@echo "Package complete: $(DU_TARGET_PACKAGE)"
+
+	@echo -e ${CL_RED}""${CL_RED}
+	@echo -e ${CL_RED}".......................########..####.########..########.##....##......................"${CL_RED}
+	@echo -e ${CL_RED}".......................##.....##..##..##.....##....##.....##..##......................."${CL_RED}
+	@echo -e ${CL_RED}".......................##.....##..##..##.....##....##......####........................"${CL_RED}
+	@echo -e ${CL_RED}".......................##.....##..##..########.....##.......##........................."${CL_RED}
+	@echo -e ${CL_RED}".......................##.....##..##..##...##......##.......##........................."${CL_RED}
+	@echo -e ${CL_RED}".......................##.....##..##..##....##.....##.......##........................."${CL_RED}
+	@echo -e ${CL_RED}".......................########..####.##.....##....##.......##........................."${CL_RED}
+	@echo -e ${CL_RED}"......................................................................................."${CL_RED}
+	@echo -e ${CL_RED}"......................................................................................."${CL_RED}
+	@echo -e ${CL_RED}".........##.....##.##....##.####..######...#######..########..##....##..######........."${CL_RED}
+	@echo -e ${CL_RED}".........##.....##.###...##..##..##....##.##.....##.##.....##.###...##.##....##........"${CL_RED}
+	@echo -e ${CL_RED}".........##.....##.####..##..##..##.......##.....##.##.....##.####..##.##.............."${CL_RED}
+	@echo -e ${CL_RED}".........##.....##.##.##.##..##..##.......##.....##.########..##.##.##..######........."${CL_RED}
+	@echo -e ${CL_RED}".........##.....##.##..####..##..##.......##.....##.##...##...##..####.......##........"${CL_RED}
+	@echo -e ${CL_RED}".........##.....##.##...###..##..##....##.##.....##.##....##..##...###.##....##........"${CL_RED}
+	@echo -e ${CL_RED}"..........#######..##....##.####..######...#######..##.....##.##....##..######........."${CL_RED}
+	@echo -e ${CL_RST}""${CL_RST}
+	@echo -e ${CL_RST}""${CL_RST}
+	@echo -e ${CL_RST}"                    Build completed! Now flash that shit and ENJOY!                    "${CL_RST}
+	@echo -e ${CL_RST}""${CL_RST}
+	@echo -e ${CL_RED}"======================================================================================="${CL_RED}
+	@echo -e ${CL_RST}"$(DU_TARGET_PACKAGE)"${CL_RST}
+	@echo -e ${CL_RED}"======================================================================================="${CL_RED}
+	@echo -e ${CL_RST}"Be yourself. Unless you can be a unicorn, in that case, you should always be a unicorn."${CL_RST}
 
 endif    # build_ota_package
 
