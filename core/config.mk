@@ -555,6 +555,7 @@ CKATI := $(prebuilt_build_tools_bin)/ckati
 DEPMOD := $(HOST_OUT_EXECUTABLES)/depmod
 FILESLIST := $(SOONG_HOST_OUT_EXECUTABLES)/fileslist
 IJAR := $(prebuilt_build_tools_bin)/ijar
+LEX := $(prebuilt_build_tools_bin)/flex
 MAKEPARALLEL := $(prebuilt_build_tools_bin)/makeparallel
 SOONG_JAVAC_WRAPPER := $(SOONG_HOST_OUT_EXECUTABLES)/soong_javac_wrapper
 SOONG_ZIP := $(SOONG_HOST_OUT_EXECUTABLES)/soong_zip
@@ -565,8 +566,6 @@ ZIPTIME := $(prebuilt_build_tools_bin)/ziptime
 # ---------------------------------------------------------------
 # Generic tools.
 JACK := $(HOST_OUT_EXECUTABLES)/jack
-
-LEX := prebuilts/misc/$(BUILD_OS)-$(HOST_PREBUILT_ARCH)/flex/flex-2.5.39
 # The default PKGDATADIR built in the prebuilt bison is a relative path
 # external/bison/data.
 # To run bison from elsewhere you need to set up enviromental variable
