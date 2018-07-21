@@ -149,6 +149,7 @@ $(call add_json_bool, Needs_text_relocations,            $(filter true,$(TARGET_
 $(call add_json_bool, Has_legacy_mmap,                   $(filter true,$(BOARD_USES_LEGACY_MMAP)))
 $(call add_json_bool, Needs_prelink_support,             $(filter true,$(TARGET_NEEDS_PRELINK_SUPPORT)))
 $(call add_json_bool, Needs_non_pie_support,             $(filter true,$(TARGET_NEEDS_NON_PIE_SUPPORT)))
+$(call add_json_str,  Target_shim_libs,                  $(subst $(space),:,$(TARGET_LD_SHIM_LIBS)))
 
 _contents := $(_contents)    "VendorVars": {$(newline)
 $(foreach namespace,$(SOONG_CONFIG_NAMESPACES),\
