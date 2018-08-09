@@ -2108,8 +2108,10 @@ vendorimage-nodeps vnod: | $(INTERNAL_USERIMAGES_DEPS) $(DEPMOD)
 sync: $(INTERNAL_VENDORIMAGE_FILES)
 
 else ifdef BOARD_PREBUILT_VENDORIMAGE
+ifneq (true,$(BOARD_PREBUILT_VENDORIMAGE))
 INSTALLED_VENDORIMAGE_TARGET := $(PRODUCT_OUT)/vendor.img
 $(eval $(call copy-one-file,$(BOARD_PREBUILT_VENDORIMAGE),$(INSTALLED_VENDORIMAGE_TARGET)))
+endif
 endif
 
 # -----------------------------------------------------------------
@@ -2920,8 +2922,12 @@ ifeq (true,$(BOARD_BUILD_DISABLED_VBMETAIMAGE))
 	$(hide) cp $(INSTALLED_VBMETAIMAGE_TARGET) $(zip_root)/IMAGES/
 endif
 ifdef BOARD_PREBUILT_VENDORIMAGE
+ifeq (true,$(BOARD_PREBUILT_VENDORIMAGE))
+	$(hide) echo "vendor_prebuilt_installed=true" >> $(zip_root)/META/misc_info.txt
+else
 	$(hide) mkdir -p $(zip_root)/IMAGES
 	$(hide) cp $(INSTALLED_VENDORIMAGE_TARGET) $(zip_root)/IMAGES/
+endif
 endif
 ifdef BOARD_PREBUILT_PRODUCTIMAGE
 	$(hide) mkdir -p $(zip_root)/IMAGES
