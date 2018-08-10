@@ -1244,6 +1244,6 @@ include $(BUILD_SYSTEM)/dumpvar.mk
 
 # QCOM targets and pathmap
 ifeq ($(BOARD_USES_QCOM_HARDWARE),true)
-include $(TOPDIR)vendor/extras/build/core/qcom_target.mk
 include $(TOPDIR)vendor/extras/build/core/pathmap.mk
+include $(TOPDIR)vendor/extras/build/core/qcom_target.mk
 endif
