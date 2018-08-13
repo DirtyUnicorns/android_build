@@ -61,8 +61,6 @@ define include-path-for
 $(foreach n,$(1),$(patsubst $(n):%,%,$(filter $(n):%,$(pathmap_INCL))))
 endef
 
-include vendor/extras/build/core/pathmap.mk
-
 #
 # A list of all source roots under frameworks/base, which will be
 # built into the android.jar.
