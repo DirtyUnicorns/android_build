@@ -24,6 +24,7 @@ PRODUCT_PACKAGES := \
     CallLogBackup \
     CellBroadcastReceiver \
     EmergencyInfo \
+    messaging \
     rild
 
 PRODUCT_COPY_FILES := \
