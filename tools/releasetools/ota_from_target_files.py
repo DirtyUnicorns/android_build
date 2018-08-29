@@ -215,7 +215,7 @@ OPTIONS.backuptool = False
 
 METADATA_NAME = 'META-INF/com/android/metadata'
 POSTINSTALL_CONFIG = 'META/postinstall_config.txt'
-UNZIP_PATTERN = ['IMAGES/*', 'META/*']
+UNZIP_PATTERN = ['IMAGES/*', 'META/*', 'INSTALL/*']
 
 
 class BuildInfo(object):
@@ -714,13 +714,13 @@ def AddCompatibilityArchiveIfTrebleEnabled(target_zip, output_zip, target_info,
 
 
 def CopyInstallTools(output_zip):
-  oldcwd = os.getcwd()
-  os.chdir(os.getenv('OUT'))
-  for root, subdirs, files in os.walk("install"):
-    for f in files:
-      p = os.path.join(root, f)
-      output_zip.write(p, p)
-  os.chdir(oldcwd)
+  install_path = os.path.join(OPTIONS.input_tmp, "INSTALL")
+  for root, subdirs, files in os.walk(install_path):
+     for f in files:
+      install_source = os.path.join(root, f)
+      install_target = os.path.join("install", os.path.relpath(root, install_path), f)
+      output_zip.write(install_source, install_target)
+
 
 def WriteFullOTAPackage(input_zip, output_file):
   target_info = BuildInfo(OPTIONS.info_dict, OPTIONS.oem_dicts)
