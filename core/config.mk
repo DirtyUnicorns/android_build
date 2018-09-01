@@ -226,6 +226,10 @@ endif
 # are specific to the user's build configuration.
 include $(BUILD_SYSTEM)/envsetup.mk
 
+ifeq ($(BOARD_USES_QCOM_HARDWARE),true)
+include $(TOPDIR)vendor/extras/build/core/BoardConfigQcom.mk
+endif
+
 # Pruned directory options used when using findleaves.py
 # See envsetup.mk for a description of SCAN_EXCLUDE_DIRS
 FIND_LEAVES_EXCLUDES := $(addprefix --prune=, $(SCAN_EXCLUDE_DIRS) .repo .git)
