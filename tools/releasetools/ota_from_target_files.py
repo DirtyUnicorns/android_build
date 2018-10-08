@@ -814,7 +814,7 @@ else if get_stage("%(bcb_dev)s") == "3/3" then
   #script.Print("Target: %s" % target_fp)
 
   script.Print(" ")
-  script.Print("         || THANK YOU FOR FLASHING ||        ");
+  script.Print("             || DIRTY UNICORNS ||            ");
   script.Print(" ")
   script.Print(" DDDDDDDDDDDDD         UUUUUUUU     UUUUUUUU ");
   script.Print(" D::::::::::::DDD      U::::::U     U::::::U ");
@@ -833,7 +833,25 @@ else if get_stage("%(bcb_dev)s") == "3/3" then
   script.Print(" D::::::::::::DDD          UU:::::::::UU     ");
   script.Print(" DDDDDDDDDDDDD               UUUUUUUUU       ");
   script.Print(" ")
-  script.Print("            ||| ANDROID 9.0.0 |||            ");
+
+  android_version = target_info.GetBuildProp("ro.build.version.release")
+  security_patch = target_info.GetBuildProp("ro.build.version.security_patch")
+  build_date = target_info.GetBuildProp("ro.build.date")
+  build_type = target_info.GetBuildProp("ro.build.type")
+  device = target_info.GetBuildProp("ro.product.device")
+
+  script.Print(" =============================================");
+  script.Print(" Android version : %s"%(android_version));
+  script.Print("");
+  script.Print(" Security patch  : %s"%(security_patch));
+  script.Print("");
+  script.Print(" Build date      : %s"%(build_date));
+  script.Print("");
+  script.Print(" Build type      : %s"%(build_type));
+  script.Print("");
+  script.Print(" =============================================");
+  script.Print(" Device          : %s"%(device));
+  script.Print(" =============================================");
 
   script.AppendExtra("ifelse(is_mounted(\"/system\"), unmount(\"/system\"));")
   device_specific.FullOTA_InstallBegin()
