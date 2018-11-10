@@ -898,7 +898,7 @@ else if get_stage("%(bcb_dev)s") == "3/3" then
                                        allow_shared_blocks)
     vendor_tgt.ResetFileMap()
     vendor_diff = common.BlockDifference("vendor", vendor_tgt)
-    vendor_diff.WriteScript(script, output_zip)
+    vendor_diff.WriteVendorScript(script, output_zip)
 
   AddCompatibilityArchiveIfTrebleEnabled(input_zip, output_zip, target_info)
 
