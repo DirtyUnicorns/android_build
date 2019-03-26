@@ -567,6 +567,7 @@ DEPMOD := $(HOST_OUT_EXECUTABLES)/depmod
 FILESLIST := $(SOONG_HOST_OUT_EXECUTABLES)/fileslist
 FILESLIST_UTIL :=$= build/make/tools/fileslist_util.py
 HOST_INIT_VERIFIER := $(HOST_OUT_EXECUTABLES)/host_init_verifier
+MAKE_PREBUILT := $(prebuilt_build_tools_bin)/make
 XMLLINT := $(SOONG_HOST_OUT_EXECUTABLES)/xmllint
 
 # SOONG_ZIP is exported by Soong, but needs to be defined early for
