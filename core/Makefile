@@ -3380,6 +3380,13 @@ else ifdef BOARD_KERNEL_SEPARATED_DTBO
 INSTALLED_DTBOIMAGE_TARGET := $(PRODUCT_OUT)/dtbo.img
 endif
 
+ifdef TARGET_NEEDS_PRODUCTIMAGE
+INSTALLED_PRODUCTIMAGE_TARGET := $(PRODUCT_OUT)/product.img
+else ifdef BOARD_PREBUILT_PRODUCTIMAGE
+INSTALLED_PRODUCTIMAGE_TARGET := $(PRODUCT_OUT)/product.img
+$(eval $(call copy-one-file,$(BOARD_PREBUILT_PRODUCTIMAGE),$(INSTALLED_PRODUCTIMAGE_TARGET)))
+endif
+
 # -----------------------------------------------------------------
 # custom images
 INSTALLED_CUSTOMIMAGES_TARGET :=
