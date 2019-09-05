@@ -558,6 +558,7 @@ _readonly_late_variables := \
 
 # Modified internally in the build system
 _readonly_late_variables += \
+  PRODUCT_CFI_INCLUDE_PATHS \
   PRODUCT_COPY_FILES \
   PRODUCT_DEX_PREOPT_NEVER_ALLOW_STRIPPING \
   PRODUCT_DEX_PREOPT_BOOT_FLAGS \
