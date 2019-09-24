@@ -351,10 +351,10 @@ _product_var_list += PRODUCT_CHECK_ELF_FILES
 .KATI_READONLY := _product_var_list
 
 define dump-product
-$(warning ==== $(1) ====)\
+$(info ==== $(1) ====)\
 $(foreach v,$(_product_var_list),\
-$(warning PRODUCTS.$(1).$(v) := $(PRODUCTS.$(1).$(v))))\
-$(warning --------)
+$(info PRODUCTS.$(1).$(v) := $(PRODUCTS.$(1).$(v))))\
+$(info --------)
 endef
 
 define dump-products

@@ -1852,6 +1852,11 @@ modules:
 	@echo "$(call module-names-for-tag-list,$(ALL_MODULE_TAGS))" | \
 	      tr -s ' ' '\n' | sort -u
 
+.PHONY: dump-products
+dump-products:
+	$(dump-products)
+	@echo Successfully dumped products
+
 .PHONY: dump-files
 dump-files:
 	$(info product_target_FILES for $(TARGET_DEVICE) ($(INTERNAL_PRODUCT)):)
