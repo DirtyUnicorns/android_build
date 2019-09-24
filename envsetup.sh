@@ -650,18 +650,19 @@ function lunch()
         echo "Invalid lunch combo: $selection"
         return 1
     fi
-
+    check_product $product
     if [ $? -ne 0 ]
     then
         # if we can't find the product, try to grab it from our github
         T=$(gettop)
-        pushd $T > /dev/null
+        cd $T > /dev/null
         if [[ $NO_ROOMSERVICE == true ]]; then
             echo "Roomservice turned off, type in 'export NO_ROOMSERVICE=false' if you want it back on"
         else
+             T=$(gettop)
             vendor/extras/build/tools/roomservice.py $product
         fi
-        popd > /dev/null
+        cd - > /dev/null
         check_product $product
     fi
     TARGET_PRODUCT=$product \
