@@ -498,6 +498,7 @@ _readonly_late_variables += \
   PRODUCT_COPY_FILES \
   PRODUCT_DEX_PREOPT_NEVER_ALLOW_STRIPPING \
   PRODUCT_DEX_PREOPT_BOOT_FLAGS \
+  PRODUCT_SOONG_NAMESPACES \
 
 _readonly_early_variables := $(filter-out $(_readonly_late_variables),$(_product_var_list))
 
