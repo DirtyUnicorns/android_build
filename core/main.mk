@@ -259,7 +259,7 @@ endif
 ## user/userdebug ##
 
 user_variant := user
-ifeq ($(TARGET_BUILD_VARIANT),eng)
+ifneq ($(filter eng userdebug,$(TARGET_BUILD_VARIANT)),)
 user_variant :=
 endif
 enable_target_debugging := true
