@@ -226,6 +226,8 @@ endif
 # are specific to the user's build configuration.
 include $(BUILD_SYSTEM)/envsetup.mk
 
+include $(TOPDIR)vendor/extras/configs/BoardConfigKernel.mk
+
 ifeq ($(BOARD_USES_QCOM_HARDWARE),true)
 include $(TOPDIR)vendor/extras/build/core/BoardConfigQcom.mk
 endif
