@@ -843,11 +843,8 @@ INSTALLED_DTBIMAGE_TARGET := $(PRODUCT_OUT)/dtb.img
 ifdef BOARD_PREBUILT_DTBIMAGE_DIR
 $(INSTALLED_DTBIMAGE_TARGET) : $(sort $(wildcard $(BOARD_PREBUILT_DTBIMAGE_DIR)/*.dtb))
 	cat $^ > $@
-else
-$(INSTALLED_DTBIMAGE_TARGET): $(INSTALLED_KERNEL_TARGET)
-	cat $(KERNEL_OUT)/arch/$(KERNEL_ARCH)/boot/dts/qcom/*.dtb > $@
-endif # BOARD_PREBUILT_DTBIMAGE_DIR
-endif # BOARD_INCLUDE_DTB_IN_BOOTIMG
+endif
+endif
 
 # -----------------------------------------------------------------
 # the ramdisk
