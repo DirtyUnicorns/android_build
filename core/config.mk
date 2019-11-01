@@ -226,13 +226,9 @@ endif
 # are specific to the user's build configuration.
 include $(BUILD_SYSTEM)/envsetup.mk
 
-include $(TOPDIR)vendor/extras/configs/BoardConfigKernel.mk
-
-ifeq ($(BOARD_USES_QCOM_HARDWARE),true)
-include $(TOPDIR)vendor/extras/build/core/BoardConfigQcom.mk
+ifneq ($(DU_BUILD),)
+include $(TOPDIR)vendor/extras/build/boardconfig/BoardConfigCommon.mk
 endif
-
-include $(TOPDIR)vendor/extras/configs/BoardConfigSoong.mk
 
 # Pruned directory options used when using findleaves.py
 # See envsetup.mk for a description of SCAN_EXCLUDE_DIRS
