@@ -38,9 +38,14 @@ PRODUCT_PACKAGES += \
     Settings \
     SettingsIntelligence \
     StorageManager \
-    SystemUI \
     WallpaperCropper \
     frameworks-base-overlays
+
+ifeq ($(filter blueline bonito coral crosshatch flame sargo taimen walleye,$(du_device)),)
+PRODUCT_PACKAGES += SystemUIGoogle
+else
+PRODUCT_PACKAGES += SystemUI
+endif
 
 PRODUCT_PACKAGES_DEBUG += \
     frameworks-base-overlays-debug
