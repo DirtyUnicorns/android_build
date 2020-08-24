@@ -41,7 +41,7 @@ PRODUCT_PACKAGES += \
     frameworks-base-overlays
 
 SYSTEM_UI_PACKAGE :=
-ifneq ($(filter blueline bonito coral crosshatch flame sargo taimen walleye,$(DU_BUILD)),)
+ifneq ($(filter blueline bonito coral crosshatch flame sargo sunfish taimen walleye,$(DU_BUILD)),)
 SYSTEM_UI_PACKAGE := SystemUIGoogle
 else
 SYSTEM_UI_PACKAGE := SystemUI
