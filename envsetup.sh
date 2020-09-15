@@ -404,7 +404,7 @@ function addcompletions()
         # Doesn't work in zsh.
         complete -o nospace -F _croot croot
     fi
-    complete -F _lunch lunch 2>/dev/null
+    complete -F _lunch lunch
 
     complete -F _complete_android_module_names gomod
     complete -F _complete_android_module_names m
@@ -666,19 +666,23 @@ function lunch()
         echo "Invalid lunch combo: $selection"
         return 1
     fi
+
+    TARGET_PRODUCT=$product \
+    TARGET_BUILD_VARIANT=$variant \
+    TARGET_PLATFORM_VERSION=$version \
+    build_build_var_cache
     check_product $product
     if [ $? -ne 0 ]
     then
         # if we can't find the product, try to grab it from our github
         T=$(gettop)
-        cd $T > /dev/null
+        pushd $T > /dev/null
         if [[ $NO_ROOMSERVICE == true ]]; then
             echo "Roomservice turned off, type in 'export NO_ROOMSERVICE=false' if you want it back on"
         else
-             T=$(gettop)
             vendor/extras/build/tools/roomservice.py $product
         fi
-        cd - > /dev/null
+        popd > /dev/null
         check_product $product
     fi
     TARGET_PRODUCT=$product \
@@ -692,7 +696,8 @@ function lunch()
         echo "** Do you have the right repo manifest?"
         product=
     fi
-     if [ -z "$product" -o -z "$variant" ]
+
+    if [ -z "$product" -o -z "$variant" ]
     then
         echo
         return 1
