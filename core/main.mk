@@ -1,7 +1,19 @@
+# Only use ANDROID_BUILD_SHELL to wrap around bash.
+# DO NOT use other shells such as zsh.
+ifdef ANDROID_BUILD_SHELL
+SHELL := $(ANDROID_BUILD_SHELL)
+else
+# Use bash, not whatever shell somebody has installed as /bin/sh
+# This is repeated in config.mk, since envsetup.sh runs that file
+# directly.
+SHELL := /bin/bash
+endif
+
 ifndef KATI
-$(warning Calling make directly is no longer supported.)
-$(warning Either use 'envsetup.sh; m' or 'build/soong/soong_ui.bash --make-mode')
-$(error done)
+host_prebuilts := linux-x86
+ifeq ($(shell uname),Darwin)
+host_prebuilts := darwin-x86
+endif
 endif
 
 $(info [1/1] initializing build system ...)

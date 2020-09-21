@@ -92,13 +92,6 @@ ifeq ($(strip $(TARGET_BUILD_VARIANT)),)
 TARGET_BUILD_VARIANT := eng
 endif
 
-TARGET_BUILD_APPS ?=
-
-.KATI_READONLY := \
-  TARGET_PRODUCT \
-  TARGET_BUILD_VARIANT \
-  TARGET_BUILD_APPS
-
 # ---------------------------------------------------------------
 # Set up configuration for host machine.  We don't do cross-
 # compiles except for arm/mips, so the HOST is whatever we are

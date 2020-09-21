@@ -3,19 +3,6 @@
 # current configuration and platform, which
 # are not specific to what is being built.
 
-ifndef KATI
-$(warning Directly using config.mk from make is no longer supported.)
-$(warning )
-$(warning If you are just attempting to build, you probably need to re-source envsetup.sh:)
-$(warning )
-$(warning $$ source build/envsetup.sh)
-$(warning )
-$(warning If you are attempting to emulate get_build_var, use one of the following:)
-$(warning $$ build/soong/soong_ui.bash --dumpvar-mode)
-$(warning $$ build/soong/soong_ui.bash --dumpvars-mode)
-$(warning )
-$(error done)
-endif
 
 BUILD_SYSTEM :=$= build/make/core
 BUILD_SYSTEM_COMMON :=$= build/make/common
