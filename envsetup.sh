@@ -670,7 +670,6 @@ function lunch()
     TARGET_PRODUCT=$product \
     TARGET_BUILD_VARIANT=$variant \
     TARGET_PLATFORM_VERSION=$version \
-    build_build_var_cache
     check_product $product
     if [ $? -ne 0 ]
     then
