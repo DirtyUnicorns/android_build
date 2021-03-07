@@ -410,13 +410,6 @@ $(intermediate_system_build_prop): $(BUILDINFO_SH) $(BUILDINFO_COMMON_SH) $(INTE
 	@echo Target buildinfo: $@
 	@mkdir -p $(dir $@)
 	$(hide) echo > $@
-ifneq ($(PRODUCT_OEM_PROPERTIES),)
-	$(hide) echo "#" >> $@; \
-	        echo "# PRODUCT_OEM_PROPERTIES" >> $@; \
-	        echo "#" >> $@;
-	$(hide) $(foreach prop,$(PRODUCT_OEM_PROPERTIES), \
-	    echo "import /oem/oem.prop $(prop)" >> $@;)
-endif
 	$(hide) PRODUCT_BRAND="$(PRODUCT_SYSTEM_BRAND)" \
 	        PRODUCT_MANUFACTURER="$(PRODUCT_SYSTEM_MANUFACTURER)" \
 	        PRODUCT_MODEL="$(PRODUCT_SYSTEM_MODEL)" \
@@ -598,6 +591,13 @@ $(INSTALLED_PRODUCT_BUILD_PROP_TARGET): $(BUILDINFO_COMMON_SH) $(POST_PROCESS_PR
 	$(hide) $(foreach line,$(FINAL_PRODUCT_PROPERTIES), \
 	    echo "$(line)" >> $@;)
 	$(hide) $(POST_PROCESS_PROPS) $@
+ifneq ($(PRODUCT_OEM_PROPERTIES),)
+	$(hide) echo "#" >> $@; \
+	        echo "# PRODUCT_OEM_PROPERTIES" >> $@; \
+	        echo "#" >> $@;
+	$(hide) $(foreach prop,$(PRODUCT_OEM_PROPERTIES), \
+	    echo "import /oem/oem.prop $(prop)" >> $@;)
+endif
 
 # ----------------------------------------------------------------
 # odm build.prop
